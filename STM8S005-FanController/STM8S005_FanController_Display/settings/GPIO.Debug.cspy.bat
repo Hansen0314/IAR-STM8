@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\DELL\Desktop\STM8S005K6ϵ�г���\STM8S005K_printf\STM8S005K\settings\GPIO.Debug.general.xcl" --backend -f "C:\Users\DELL\Desktop\STM8S005K6ϵ�г���\STM8S005K_printf\STM8S005K\settings\GPIO.Debug.driver.xcl" 
+"E:\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "E:\工作\胡老师\风扇控制器\IAR-STM8\STM8S005-FanController\STM8S005_FanController_Display\settings\GPIO.Debug.general.xcl" --backend -f "E:\工作\胡老师\风扇控制器\IAR-STM8\STM8S005-FanController\STM8S005_FanController_Display\settings\GPIO.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\DELL\Desktop\STM8S005K6ϵ�г���\STM8S005K_printf\STM8S005K\settings\GPIO.Debug.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\DELL\Desktop\STM8S005K6ϵ�г���\STM8S005K_printf\STM8S005K\settings\GPIO.Debug.driver.xcl" 
+"E:\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "E:\工作\胡老师\风扇控制器\IAR-STM8\STM8S005-FanController\STM8S005_FanController_Display\settings\GPIO.Debug.general.xcl" "--debug_file=%~1" --backend -f "E:\工作\胡老师\风扇控制器\IAR-STM8\STM8S005-FanController\STM8S005_FanController_Display\settings\GPIO.Debug.driver.xcl" 
 
 @echo off 
 :end
