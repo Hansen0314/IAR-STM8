@@ -20,6 +20,18 @@ const unsigned char Cs1_Dis_Digitron_Num[] =
 {   
   0xf5, 0X60, 0Xd3, 0X97, 0X27, 0XB6, 0Xf6, 0X15, 0Xf7, 0Xb7 
 };
+const unsigned char T_Addr[] =
+{
+	0x00,0x04,0x0e,0x10,0x10,0x12,0x12,0x12,0x12,0x12,0x10,0x10,0x10,0x12,0x12,0x12,0x12,0x14,0x14,0x14,0x17
+};
+const unsigned char T_Mask[] =
+{
+	0x00,0x04,0x0e,0x10,0x10,0x12,0x12,0x12,0x12,0x12,0x10,0x10,0x10,0x12,0x12,0x12,0x12,0x14,0x14,0x14,0x17
+};
+unsigned char ram_map[33] = 
+{
+	0
+};
 void ht1621_send_high_order_data(u8 data, u8 len)
 {
 	u8 i;
@@ -82,8 +94,10 @@ void ht1621_send_cmd(u8 command)
  
 void ht1621_write(u8 cs ,u8 addr, u8 data)
 {
+  
   if(cs==1)
-  {
+  { 
+	ram_map[addr] = data;
 	Set_Port_Val(CS_1_PIN, 0);
 	ht1621_send_high_order_data(0xA0, 3);
 	ht1621_send_high_order_data(addr<<2, 6);
@@ -99,6 +113,7 @@ void ht1621_write(u8 cs ,u8 addr, u8 data)
         Set_Port_Val(CS_2_PIN, 1);  
   }      
 }
+
 void ht1621_init()
 {
         u8 i;
