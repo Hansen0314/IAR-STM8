@@ -16,22 +16,26 @@ const unsigned char Cs1_Dis_Digitron_Num[] =
 {   
   0xf5, 0X60, 0Xd3, 0X97, 0X27, 0XB6, 0Xf6, 0X15, 0Xf7, 0Xb7 
 };
+/*
 const unsigned char Cs1_Dis_Digitron_Num[] = 
 {   
   0xf5, 0X60, 0Xd3, 0X97, 0X27, 0XB6, 0Xf6, 0X15, 0Xf7, 0Xb7 
 };
+*/
 const unsigned char T_Addr[] =
 {
-	0x00,0x04,0x0e,0x10,0x10,0x12,0x12,0x12,0x12,0x12,0x10,0x10,0x10,0x12,0x12,0x12,0x12,0x14,0x14,0x14,0x17
+	0x00,0x04,0x0e,0x10,0x10,0x12,0x12,0x12,0x12,0x10,0x10,0x10,0x10,0x12,0x12,0x12,0x12,0x14,0x14,0x14,0x1A,0x10,0x10
 };
 const unsigned char T_Mask[] =
 {
-	0x00,0x04,0x0e,0x10,0x10,0x12,0x12,0x12,0x12,0x12,0x10,0x10,0x10,0x12,0x12,0x12,0x12,0x14,0x14,0x14,0x17
+	0x00,0x08,0x08,0x80,0x02,0x80,0x40,0x20,0x10,0x01,0x40,0x20,0x10,0x08,0x04,0x02,0x01,0x20,0x40,0x10,0x80,0x08,0x04
 };
 unsigned char ram_map[33] = 
 {
 	0
 };
+const unsigned char S_Addr[] = {0X00,0x10,0x10};
+const unsigned char S_Mask[] = {0X00,0x08,0x04};
 void ht1621_send_high_order_data(u8 data, u8 len)
 {
 	u8 i;
@@ -113,6 +117,20 @@ void ht1621_write(u8 cs ,u8 addr, u8 data)
         Set_Port_Val(CS_2_PIN, 1);  
   }      
 }
+void ht1621_T_write(u8 cs ,u8 addr, u8 data ,u8 status)
+{
+  u8 cs_1=cs;
+  u8 t_data;
+  t_data=ram_map[addr];
+  if(status) t_data |= data;
+  else t_data &= ~data;
+  ram_map[addr] = t_data;
+  Set_Port_Val(CS_1_PIN, 0);
+  ht1621_send_high_order_data(0xA0, 3);
+  ht1621_send_high_order_data(addr<<2, 6);
+  ht1621_send_high_order_data(t_data, 8);
+  Set_Port_Val(CS_1_PIN, 1);  
+}
 
 void ht1621_init()
 {
@@ -127,12 +145,18 @@ void ht1621_init()
 	ht1621_send_cmd(HT_RCOSC);
 	ht1621_send_cmd(HT_BISA_COM);
 	ht1621_send_cmd(HT_LCD_ON);
-        for(i=1;i<25;i++)
+        for(i=1;i<10;i++)
         {
-          if(i<12)ht1621_write(1,Cs1_Dis_Digitron_Addr[i],Cs1_Dis_Digitron_Num[9]);
-          ht1621_write(2,Cs1_Dis_Digitron_Addr[i],Cs1_Dis_Digitron_Num[9]);
+          ht1621_write(1,Cs1_Dis_Digitron_Addr[i],Cs1_Dis_Digitron_Num[i]);
         }
+        for(i=1;i<10;i++)
+        {
+          ht1621_T_write(1,T_Addr[i],T_Mask[i],1);
+        }        
+        for(i=1;i<3;i++)
+          ht1621_T_write(1,S_Addr[i],S_Mask[i],1);
         //ht1621_write(1,Cs1_Dis_Digitron_Addr[15],Cs1_Dis_Digitron_Num[2]);
+        
 }
  
  
