@@ -9,7 +9,7 @@
 #define RD_PIN GPIO_PIN_6
 #define WR_PIN GPIO_PIN_5
 #define DATA_PIN GPIO_PIN_4
-#define CS_2_PIN GPIO_PIN_3
+#define CS_2_PIN GPIO_PIN_7
 
 #define DELAY_US_NUM 4
 
@@ -25,8 +25,18 @@
 #define HT_RCOSCEX                      0x38
 //#define T1_MASK 
 //
-
+void ht1621_write(u8 cs ,u8 addr, u8 data);
+void ht1621_Char_write(u8 cs ,u8 addr, u8 data ,u8 status);
 void ht1621_init();
 u8 ht1621_read(u8 addr);
-extern const unsigned char Dis_Num[10];
+extern const unsigned char Cs1_Dis_Digitron_Addr[];
+extern const unsigned char Cs1_Dis_Digitron_Num[];
+extern const unsigned char P_Addr[];
+extern const unsigned char P_Mask[];
+
+extern const unsigned char S_Addr[];
+extern const unsigned char S_Mask[];
+extern const unsigned char T_Mask[];
+extern const unsigned char T_Addr[];
+
 #endif

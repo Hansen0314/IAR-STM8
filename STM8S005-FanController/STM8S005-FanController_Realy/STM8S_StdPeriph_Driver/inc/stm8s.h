@@ -235,6 +235,14 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;
 #define S32_MAX    (2147483647)
 #define S32_MIN    (-2147483648uL)
 
+struct Peripheral
+{
+  u8  Fr;
+  u8  Dp;
+  u16 a11;
+  u16 a12;
+  u16 a13;
+};
 /**
   * @}
   */

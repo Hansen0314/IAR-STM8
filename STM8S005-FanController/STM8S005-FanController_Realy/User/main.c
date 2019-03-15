@@ -1,5 +1,8 @@
 #include "stm8s.h"
 #include "user_uart.h"
+#include "Gpio.h"
+#include "Adc.h"
+#include "delay.h"
 void delay(uint32_t time)
 {
     while(--time);
@@ -8,36 +11,25 @@ uint8_t ii;
 #define RxBufferSize 64
 extern u8 RxBuffer[RxBufferSize];
 extern u8 UART_RX_NUM;
+
+struct Peripheral peripheral;
 void main()
-{
-    uint8_t len;    
+{   
     CLK_HSICmd(ENABLE);
     CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);
+    Gpio_Init();
     uart2Init();
+    Adc_Init();
     enableInterrupts();
-    printf("\r\n硬件平台为:%s\r\n","STM8S005K6 开发板");
-    printf("\r\n修改时间：%s\r\n","2018-04-01");
-    printf("\r\n本例程测试方法：%s\r\n","在串口助手输入字符或者字符串必须要按下回车键，再点击发送");
     while(1)
     {
-        /*
-        GPIO_WriteLow(GPIOD,GPIO_PIN_2);
-        if(++ii>250)
-                ii=0;
-        printf("\r\n ii=%3d",ii);
-
-        delay(9000);
-        GPIO_WriteReverse(GPIOA,GPIO_PIN_1);
-        delay(9000);
-        */
-        if(UART_RX_NUM&0x80)
-        {
-            len=UART_RX_NUM&0x3f;/*得到此次接收到的数据长度*/
-            uart2SendString("You sent the messages is:",sizeof("You sent the messages is"));
-            uart2SendString(RxBuffer,len);
-            printf("\r\n得到此次接收到的数据长度:%dByte\r\n",len);
-            UART_RX_NUM=0;
-        }
+        peripheral.Dp = GPIO_ReadInputPin(DP_PORT,DP_PIN);
+        peripheral.Fr = GPIO_ReadInputPin(FR_PORT,FR_PIN);
+        peripheral.a11 = Adc_Concersion(A11_PIN_C);
+        peripheral.a12 = Adc_Concersion(A12_PIN_C);
+        peripheral.a13 = Adc_Concersion(A13_PIN_C);
+        Uart_Send_data(peripheral);
+        Delay_Ms(1000);
     }
 }
 
