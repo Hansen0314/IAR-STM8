@@ -100,3 +100,10 @@ void Tim4_Init(void)
   /* Enable TIM4 */
   TIM4_Cmd(ENABLE);
 }
+void Tim1_Init(void)
+{
+  TIM1_TimeBaseInit(0X04,TIM1_COUNTERMODE_DOWN,1000,1);  //16分频 1us一次中断 重复寄存器
+  TIM1->IER |= (uint8_t)0x01;
+  TIM1_ClearFlag(TIM1_FLAG_UPDATE);
+  TIM1_Cmd(ENABLE);
+}

@@ -35,12 +35,14 @@ uint8_t uart2ReceiveByte(void)
      return  USART2_RX_BUF;
 }
 /*将Printf内容发往串口*/ 
+/*
 int fputc(int ch, FILE *f)
 {  
   UART2->DR=(unsigned char)ch;
   while (!(UART2->SR & UART2_FLAG_TXE));
   return (ch);
 }
+*/
 void Uart_IT_Receive_Control(u8 data)
 {
   switch(data)

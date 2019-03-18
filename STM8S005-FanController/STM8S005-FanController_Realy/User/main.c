@@ -20,16 +20,20 @@ void main()
     Gpio_Init();
     uart2Init();
     Adc_Init();
+    Tim4_Init();
     enableInterrupts();
     while(1)
     {
         peripheral.Dp = GPIO_ReadInputPin(DP_PORT,DP_PIN);
         peripheral.Fr = GPIO_ReadInputPin(FR_PORT,FR_PIN);
-        peripheral.a11 = Adc_Concersion(A11_PIN_C);
-        peripheral.a12 = Adc_Concersion(A12_PIN_C);
-        peripheral.a13 = Adc_Concersion(A13_PIN_C);
+        peripheral.a11 = Adc_Concersion(A11_CHANNEL);
+        peripheral.a12 = Adc_Concersion(A12_CHANNEL);
+        peripheral.a13 = Adc_Concersion(A13_CHANNEL);
         Uart_Send_data(peripheral);
         Delay_Ms(1000);
+        printf("a11 is %d \n",(int)peripheral.a11);
+        printf("a12 is %d \n",(int)peripheral.a12);
+        printf("a13 is %d \n",(int)peripheral.a13);
     }
 }
 

@@ -1,5 +1,8 @@
 #include "stm8s.h"
 #include "stdio.h"
+#include "user_uart.h"
+u8 IT_Receive_A,IT_Receive_A_num;
+struct Peripheral Peripheral_Realy;
 /*1位起始位 8位数据位 结束位由CR3设置 不使用奇偶校验 不使能奇偶校验中断*/
 /*使能发送和接收 接收中断使能 禁止发送中断*/
 /*设置1位停止位 不使能SCLK，波特率115200*/  
@@ -35,11 +38,71 @@ uint8_t uart2ReceiveByte(void)
      return  USART2_RX_BUF;
 }
 /*将Printf内容发往串口*/ 
-/*
+#if 0
 int fputc(int ch, FILE *f)
 {  
   UART2->DR=(unsigned char)ch;
   while (!(UART2->SR & UART2_FLAG_TXE));
   return (ch);
 }
-*/
+#endif
+void Uart_IT_Receive_Hnadle(u8 data)
+{
+    switch(IT_Receive_A)
+    {
+      case 1: 
+        Peripheral_Realy.a11 |= data<<4;
+        IT_Receive_A_num++;
+        if(IT_Receive_A_num>1)
+        {
+          Peripheral_Realy.a11 |= data;
+          IT_Receive_A_num = 0;
+          IT_Receive_A =0;
+        }
+      break;
+      case 2: 
+        Peripheral_Realy.a12 |= data<<4;
+        IT_Receive_A_num++;
+        if(IT_Receive_A_num>1)
+        {
+          Peripheral_Realy.a12 |= data;
+          IT_Receive_A_num = 0;
+          IT_Receive_A =0;
+        }
+      break;
+      case 3: 
+          Peripheral_Realy.a13 |= data<<4;
+          IT_Receive_A_num++;
+          if(IT_Receive_A_num>1)
+          {
+            Peripheral_Realy.a13 |= data;
+            IT_Receive_A_num = 0;
+            IT_Receive_A =0;
+          }
+      break;
+      default :
+      break;    
+    }
+    
+   switch(data)
+   {
+      case FR_HIGH:Peripheral_Realy.Fr = 1;
+      break;	
+      case FR_LOW: Peripheral_Realy.Fr = 0;
+      break;
+      case DP_HIGH: Peripheral_Realy.Dp = 1;
+      break;
+      case DP_LOW: Peripheral_Realy.Dp = 0;
+      break;		
+      case A11_VALUE: IT_Receive_A = 1;
+      break;
+      case A12_VALUE: IT_Receive_A = 2;
+      break;
+      case A13_VALUE: IT_Receive_A = 3;
+      break;
+      default :
+      break;
+  }
+
+   
+}

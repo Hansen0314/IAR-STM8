@@ -23,7 +23,8 @@ u16 Adc_Concersion(ADC1_Channel_TypeDef ADC_Channels)
 	while(!ADC1_GetFlagStatus(ADC1_FLAG_EOC));//等待转换结束
 	ADC1_ClearFlag(ADC1_FLAG_EOC);//清除相关标识
 	data = ADC1_GetConversionValue();
-	data = data*3300UL/4095UL;
+        //if(ADC_Channels == )
+	data = data*5000UL/1024UL;
 	return data;
 
 }

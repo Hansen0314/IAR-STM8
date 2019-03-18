@@ -35,3 +35,4 @@ void TimingDelay_Decrement(void);
 extern __IO uint32_t TimingDelay;
 /******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
 void Tim4_Init(void);
+void Tim1_Init(void);

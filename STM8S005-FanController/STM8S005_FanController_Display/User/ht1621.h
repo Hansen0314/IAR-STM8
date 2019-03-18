@@ -4,12 +4,13 @@
 
 #include "stm8s.h"
 #include "delay.h"
+#include "KeyBorad.h"
 #define LCD_PROT GPIOC
 #define CS_1_PIN GPIO_PIN_7
 #define RD_PIN GPIO_PIN_6
 #define WR_PIN GPIO_PIN_5
 #define DATA_PIN GPIO_PIN_4
-#define CS_2_PIN GPIO_PIN_7
+#define CS_2_PIN GPIO_PIN_3
 
 #define DELAY_US_NUM 4
 
@@ -23,13 +24,38 @@
 #define HT_SYS_EN			0x02
 #define HT_RCOSC			0x30
 #define HT_RCOSCEX                      0x38
-//#define T1_MASK 
-//
+
+#define CS1_DIGITRON_START               1
+#define CS1_DIGITRON_END                 11
+#define CS2_12_15_DIGITRON_START         12
+#define CS2_12_15_DIGITRON_END           15
+#define CS2_16_19_DIGITRON_START         16
+#define CS2_16_19_DIGITRON_END           19
+#define CS2_20_24_DIGITRON_START         20
+#define CS2_20_24_DIGITRON_END           24
+
+#define CS1_T_START                      1
+#define CS1_T_END                        20
+#define CS2_T_START                      21
+#define CS2_T_END                        33
+
+#define CS1_S_START                      1
+#define CS1_S_END                        2
+
+#define CS1_P_START                      1
+#define CS1_P_END                        7
+void ht1621_Clear();
 void ht1621_write(u8 cs ,u8 addr, u8 data);
 void ht1621_Char_write(u8 cs ,u8 addr, u8 data ,u8 status);
 void ht1621_init();
 u8 ht1621_read(u8 addr);
-extern const unsigned char Cs1_Dis_Digitron_Addr[];
+void ht1621_char_display();
+void Now_Time_Display(struct ALLDATE alldate);
+void Hepa_Set_Display(struct Hepa hepa);
+void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_State);
+void Fan_Speed_State_Display(u8 Fan_Seepd_State);
+
+extern const unsigned char Dis_Digitron_Addr[];
 extern const unsigned char Cs1_Dis_Digitron_Num[];
 extern const unsigned char P_Addr[];
 extern const unsigned char P_Mask[];
@@ -38,5 +64,10 @@ extern const unsigned char S_Addr[];
 extern const unsigned char S_Mask[];
 extern const unsigned char T_Mask[];
 extern const unsigned char T_Addr[];
+
+extern const unsigned char Cs2_12_15_Dis_Digitron_Num[];
+extern const unsigned char Cs2_16_19_Dis_Digitron_Num[];
+extern const unsigned char Cs2_20_24_Dis_Digitron_Num[];
+extern void Display_all(struct KEYHANDLE KeyHandle);
 
 #endif

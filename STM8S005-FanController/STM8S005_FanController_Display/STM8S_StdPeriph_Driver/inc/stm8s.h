@@ -214,8 +214,36 @@ typedef int8_t  s8;
 typedef uint32_t  u32;
 typedef uint16_t u16;
 typedef uint8_t  u8;
-
-
+struct HMS{
+	unsigned char hour;
+	unsigned char min;
+	unsigned char sec;
+};
+struct MD{
+	unsigned char month;
+	unsigned char date;
+};
+struct YD{
+	unsigned char year;
+	unsigned char day;
+};
+struct ALLDATE{
+	struct YD yd;
+	struct MD md;
+	struct HMS hms;
+};
+struct KEYHANDLE{
+    u8 Fan_Seepd_State;
+    u8 Led_P1_State;
+    u8 Led_P2_State;
+    u8 Door_State;
+    u8 Fan_Seepd_Max_State;
+};
+struct Hepa 
+{
+  u8 Fan_Seepd;
+  u8 Work_Time;
+};
 typedef enum {FALSE = 0, TRUE = !FALSE} bool;
 
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus, BitStatus, BitAction;
@@ -241,6 +269,7 @@ struct Peripheral
   u16 a11;
   u16 a12;
   u16 a13;
+  
 };
 /**
   * @}
