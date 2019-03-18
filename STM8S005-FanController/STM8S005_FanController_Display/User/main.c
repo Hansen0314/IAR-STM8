@@ -5,14 +5,16 @@
 #include "Gpio.h"
 #include "KeyBorad.h"
 #include "DS1302.h"
- u8 Dis_Bling;
+extern u8 Dis_Bling;
 struct Peripheral peripheral;
+extern struct Hepa hepa;
 uint8_t ii;
 #define RxBufferSize 64
 extern u8 RxBuffer[RxBufferSize];
 extern u8 UART_RX_NUM;
 struct ALLDATE Ds1302_Alldate;
 extern u16 Peripheral_A11_Max;
+extern u8 Pm_Time;
 void main()
 {  
     u8 i = 0;
@@ -34,26 +36,22 @@ void main()
     enableInterrupts();
     KeyBorad_PinInit();
     Back_Light_On();
-    Ds1302_Init();
-    Ds1302_Alldate = ds1302_readTime(); 
+//    Ds1302_Init();
+//    Ds1302_Alldate = ds1302_readTime(); 
 //    printf("%d \n",i);
     KeyHandle.Fan_Seepd_State = 4;
+    hepa.Fan_Seepd = 999;
 #endif  
     while(1)
     {
 #if 1     
-       if(Dis_Bling == 1)
-       {
-          //printf("1\n");
-          Dis_Bling = 0;
-       }
        /*      
        Delay_Ms(1000);
        Ds1302_Alldate = ds1302_readTime();
        printf("now time is %d:%d:%d\n",(int)Ds1302_Alldate.hms.hour,(int)Ds1302_Alldate.hms.min,(int)Ds1302_Alldate.hms.sec); 
        */
       KeyBorad_Hnadle(KeyBorad_Scan());
-      Display_all(peripheral,KeyHandle);
+      Display_all(peripheral,KeyHandle,hepa,Ds1302_Alldate);
       //Delay_Ms(1000);
       //Peripheral_Rceive_Display(Peripheral_Realy,1,1,1);
       //Fan_Speed_State_Display(KeyHandle.Fan_Seepd_State);      

@@ -50,13 +50,13 @@ void ht1621_write(u8 cs ,u8 addr, u8 data);
 void ht1621_Char_write(u8 cs ,u8 addr, u8 data ,u8 status);
 void ht1621_init();
 void ht1621_char_display();
-void Now_Time_Display(struct ALLDATE alldate);
-void Hepa_Set_Display(struct Hepa hepa);
-void Peripheral_Rceive_Display(struct Peripheral peripheral);
+void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandle);
+void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle);
+void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_State);
 void Fan_Speed_State_Display(u8 Fan_Seepd_State);
 void Door_State_Display(u8 Door_State);
 void Led_P1_State_Display(u8 Led_P1_State);
-
+void Display_all(struct Peripheral peripheral,struct KEYHANDLE KeyHandle,struct Hepa Hepa,struct ALLDATE alldate);
 extern const unsigned char Dis_Digitron_Addr[];
 extern const unsigned char Cs1_Dis_Digitron_Num[];
 extern const unsigned char P_Addr[];
@@ -70,6 +70,6 @@ extern const unsigned char T_Addr[];
 extern const unsigned char Cs2_12_15_Dis_Digitron_Num[];
 extern const unsigned char Cs2_16_19_Dis_Digitron_Num[];
 extern const unsigned char Cs2_20_24_Dis_Digitron_Num[];
-extern void Display_all(struct Peripheral peripheral,struct KEYHANDLE KeyHandle);
 
+extern u8 Dis_Bling;
 #endif

@@ -1,5 +1,8 @@
 #include "KeyBorad.h"
 struct KEYHANDLE KeyHandle;
+extern u16 Peripheral_A11_Max;
+struct Hepa hepa;
+extern u8 Pm_Time;
 void KeyBorad_PinInit(void)
 {
     GPIO_Init(KEYBORAD_PROT, KEYBORAD_H_4_PIN, GPIO_MODE_IN_PU_NO_IT);              
@@ -77,22 +80,106 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         KeyHandle.Door_State = 1;
       break;
       case S5_DOWN_VALUE:
-        KeyHandle.Fan_Seepd_Max_State++;
-        if(KeyHandle.Fan_Seepd_Max_State > 1)
-          KeyHandle.Fan_Seepd_Max_State = 0;
+        if(KeyHandle.HEAP_State == 1)
+        {
+          KeyHandle.HEAP_Dis_State ++;
+          if(KeyHandle.HEAP_Dis_State > 1)
+            KeyHandle.HEAP_Dis_State = 0;
+        }
+        else if(KeyHandle.Oper_Mode_State == 1)
+        {
+          KeyHandle.Oper_Mode_Dis_State ++;
+          if(KeyHandle.Oper_Mode_Dis_State > 2)
+          {
+            KeyHandle.Oper_Mode_Dis_State = 0;
+          }
+        }
+        else 
+        {
+          KeyHandle.Fan_Seepd_Max_State++;
+          if(KeyHandle.Fan_Seepd_Max_State > 1)
+           KeyHandle.Fan_Seepd_Max_State = 0;
+        }
       break;
-      case S6_DOWN_VALUE: 
-/*       
+      case S6_DOWN_VALUE:      
         if(KeyHandle.Fan_Seepd_Max_State == 1)
         {
-          KeyHandle.Fan_Seepd_Max_State = 
-          
+          Peripheral_A11_Max ++;
+          if (Peripheral_A11_Max > 1000) 
+            Peripheral_A11_Max = 0;
         }
-*/
+        else
+        {
+          KeyHandle.HEAP_State++;
+          if(KeyHandle.HEAP_State > 1) 
+            KeyHandle.HEAP_State = 0;
+        }
       break;
       case S7_DOWN_VALUE: 
+      if (KeyHandle.Fan_Seepd_Max_State == 1)
+      {
+        Peripheral_A11_Max --;  
+        if (Peripheral_A11_Max < 1) Peripheral_A11_Max = 1000;
+      }
+      else if(KeyHandle.HEAP_State == 1)
+      {
+        if(KeyHandle.HEAP_Dis_State == 1)
+        {  
+          hepa.Fan_Seepd++;
+          if(hepa.Fan_Seepd > 998)
+            hepa.Fan_Seepd = 0;
+        }
+        else if(KeyHandle.HEAP_Dis_State == 0)
+        {  
+          hepa.Work_Time++;
+          if(hepa.Work_Time > 9998)
+            hepa.Work_Time = 0;
+        }
+      }
+      else
+      {
+        KeyHandle.Oper_Mode_State ++;
+        if(KeyHandle.Oper_Mode_State > 1) 
+        {
+          KeyHandle.Oper_Mode_State = 0;
+        }
+      }
+      
       break;
       case S8_DOWN_VALUE: 
+        if(KeyHandle.HEAP_State == 1)
+        {
+          if(KeyHandle.HEAP_Dis_State == 1)
+          {  
+            hepa.Fan_Seepd --;
+            if(hepa.Fan_Seepd < 1)
+              hepa.Fan_Seepd = 999;
+          }
+          else if(KeyHandle.HEAP_Dis_State == 0)
+          {
+            hepa.Work_Time --;
+            if(hepa.Work_Time < 1)
+              hepa.Work_Time = 9999;
+          }
+        }
+        else if(KeyHandle.Oper_Mode_State == 1)
+        {
+          // KeyHandle.Oper_Mode_Dis_Time_Set_State ++;
+          // if(KeyHandle.Oper_Mode_Dis_Time_Set_State > 1)
+          //   KeyHandle.Oper_Mode_Dis_Time_Set_State = 0;
+          if(KeyHandle.Oper_Mode_Dis_State == 2)
+          {
+            Pm_Time ++;
+            if(Pm_Time > 7)
+            Pm_Time = 0;
+          }
+          else if(KeyHandle.Oper_Mode_Dis_State == 1)
+          {
+            
+            
+          }
+        }
+        
       break;      
       default : 
       break;
