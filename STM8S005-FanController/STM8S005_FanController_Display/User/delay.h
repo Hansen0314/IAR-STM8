@@ -19,7 +19,7 @@
   */
 #include "stm8s.h"
 #define TIM4_PERIOD       124
-//需要设置系统时钟为16M
+//锟斤拷要锟斤拷锟斤拷系统时锟斤拷为16M
 //CLK_SYSCLKDivConfig(CLK_SYSCLKDiv_1);
 //------------------------------------------------------------------------------
 // Function Name : delay_ms

@@ -35,7 +35,7 @@ void main()
     KeyBorad_PinInit();
     Back_Light_On();
     Ds1302_Init();
-    Ds1302_Alldate = ds1302_readTime();
+    Ds1302_Alldate = ds1302_readTime(); 
 //    printf("%d \n",i);
     KeyHandle.Fan_Seepd_State = 4;
 #endif  
@@ -44,7 +44,7 @@ void main()
 #if 1     
        if(Dis_Bling == 1)
        {
-          printf("1\n");
+          //printf("1\n");
           Dis_Bling = 0;
        }
        /*      
@@ -53,7 +53,7 @@ void main()
        printf("now time is %d:%d:%d\n",(int)Ds1302_Alldate.hms.hour,(int)Ds1302_Alldate.hms.min,(int)Ds1302_Alldate.hms.sec); 
        */
       KeyBorad_Hnadle(KeyBorad_Scan());
-      Display_all(KeyHandle);
+      Display_all(peripheral,KeyHandle);
       //Delay_Ms(1000);
       //Peripheral_Rceive_Display(Peripheral_Realy,1,1,1);
       //Fan_Speed_State_Display(KeyHandle.Fan_Seepd_State);      

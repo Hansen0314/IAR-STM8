@@ -21,8 +21,8 @@ void delay_us()
 void IIC_Init(void)
 {                        
     //由于STM8单片机，可以在输入和输出条件下读取IO口状态，故直接设置为输出。
-    GPIO_Init(GPIOC, GPIO_PIN_1, GPIO_MODE_OUT_OD_HIZ_SLOW );
-    GPIO_Init(GPIOE, GPIO_PIN_5, GPIO_MODE_OUT_OD_HIZ_SLOW );
+    GPIO_Init(GPIOC, GPIO_PIN_1, GPIO_MODE_OUT_PP_LOW_SLOW);
+    GPIO_Init(GPIOE, GPIO_PIN_5, GPIO_MODE_OUT_PP_LOW_SLOW);
     IIC_SCL_H;
     IIC_SDA_H;
 }
@@ -253,20 +253,20 @@ void ds1302_writeByte(u8 Addr,u8 Data)
 
     IIC_Start();
     IIC_Send_Byte(Addr);
-    while(!IIC_Wait_Ack());
+    while(IIC_Wait_Ack());
     IIC_Send_Byte(Data);
-    while(!IIC_Wait_Ack());
+    while(IIC_Wait_Ack());
     IIC_Stop();
 }
 u8 ds1302_readByte(u8 Addr)
 {
 	u8 data;
-        IIC_Start(); 
+    IIC_Start(); 
 	IIC_Send_Byte(Addr);
-        while(!IIC_Wait_Ack());
+    while(IIC_Wait_Ack());
 	data = IIC_Read_Byte(1);
-        IIC_Stop();
-        Delay_Us(10);
+    IIC_Stop();
+    Delay_Us(10);
 	return data;
 }
 unsigned char BCDToDec(unsigned char mData)
