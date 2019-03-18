@@ -259,7 +259,7 @@ void set_lcd_off()
 {
 	ht1621_send_cmd(HT_LCD_OFF);
 }
-void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_State)
+void Peripheral_Rceive_Display(struct Peripheral peripheral)
 {
    if(Fan_Seepd_Max_State == 0)
    {

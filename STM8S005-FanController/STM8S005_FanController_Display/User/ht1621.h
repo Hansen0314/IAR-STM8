@@ -19,11 +19,11 @@
 #define HT_BISA_COM			0x52		//(1<<1) | (0<<3) | (1<<4) | (0<<5) | (1<<6) | (0<<7) | (0<<8) | (0<<9) | (0<<10) | (1<<11)
 #define HT_LCD_OFF			0x04		//(0<<1) | (1<<2) | (0<<4) | (0<<5) | (0<<6) | (0<<7) | (0<<8) | (0<<9) | (0<<10) | (1<<11)
 #define HT_LCD_ON			0x06		//(1<<1) | (1<<2) | (0<<4) | (0<<5) | (0<<6) | (0<<7) | (0<<8) | (0<<9) | (0<<10) | (1<<11)
-#define HT_WRITE_CMD		        0x80		//(0<<0) | (0<<1) | (1<<2)  | (0<<3) | (1<<4) | (0<<5) | (1<<6) | (0<<7) | (1<<8)
-#define HT_WRITE_DATA		        0XA0
+#define HT_WRITE_CMD		0x80		//(0<<0) | (0<<1) | (1<<2)  | (0<<3) | (1<<4) | (0<<5) | (1<<6) | (0<<7) | (1<<8)
+#define HT_WRITE_DATA		0XA0
 #define HT_SYS_EN			0x02
 #define HT_RCOSC			0x30
-#define HT_RCOSCEX                      0x38
+#define HT_RCOSCEX          0x38
 
 #define CS1_DIGITRON_START               1
 #define CS1_DIGITRON_END                 11
@@ -44,16 +44,18 @@
 
 #define CS1_P_START                      1
 #define CS1_P_END                        7
+
 void ht1621_Clear();
 void ht1621_write(u8 cs ,u8 addr, u8 data);
 void ht1621_Char_write(u8 cs ,u8 addr, u8 data ,u8 status);
 void ht1621_init();
-u8 ht1621_read(u8 addr);
 void ht1621_char_display();
 void Now_Time_Display(struct ALLDATE alldate);
 void Hepa_Set_Display(struct Hepa hepa);
-void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_State);
+void Peripheral_Rceive_Display(struct Peripheral peripheral);
 void Fan_Speed_State_Display(u8 Fan_Seepd_State);
+void Door_State_Display(u8 Door_State);
+void Led_P1_State_Display(u8 Led_P1_State);
 
 extern const unsigned char Dis_Digitron_Addr[];
 extern const unsigned char Cs1_Dis_Digitron_Num[];
@@ -68,6 +70,6 @@ extern const unsigned char T_Addr[];
 extern const unsigned char Cs2_12_15_Dis_Digitron_Num[];
 extern const unsigned char Cs2_16_19_Dis_Digitron_Num[];
 extern const unsigned char Cs2_20_24_Dis_Digitron_Num[];
-extern void Display_all(struct KEYHANDLE KeyHandle);
+extern void Display_all(struct Peripheral peripheral,struct KEYHANDLE KeyHandle);
 
 #endif
