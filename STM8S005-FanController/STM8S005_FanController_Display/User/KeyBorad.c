@@ -3,6 +3,7 @@ struct KEYHANDLE KeyHandle;
 extern u16 Peripheral_A11_Max;
 struct Hepa hepa;
 extern u8 Pm_Time;
+extern u8 Od_State;
 void KeyBorad_PinInit(void)
 {
     GPIO_Init(KEYBORAD_PROT, KEYBORAD_H_4_PIN, GPIO_MODE_IN_PU_NO_IT);              
@@ -62,7 +63,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
    {
       case S1_DOWN_VALUE: 
         KeyHandle.Fan_Seepd_State ++;
-        if(KeyHandle.Fan_Seepd_State  > 4) KeyHandle.Fan_Seepd_State  = 1;
+        if(KeyHandle.Fan_Seepd_State  > 3) KeyHandle.Fan_Seepd_State  = 0;
       break;
       case S2_DOWN_VALUE: 
         KeyHandle.Led_P1_State ++;
@@ -107,6 +108,79 @@ void KeyBorad_Hnadle(u8 KeyVaul)
           Peripheral_A11_Max ++;
           if (Peripheral_A11_Max > 1000) 
             Peripheral_A11_Max = 0;
+        }
+        else if(KeyHandle.Oper_Mode_State == 1)
+        {
+          if(KeyHandle.Oper_Mode_Dis_State == 1)
+          {
+            if(KeyHandle.Od_State.Od_Num ==0)
+            {
+              KeyHandle.Od_State.Fan_State++;
+              if(KeyHandle.Od_State.Fan_State > 3)
+                KeyHandle.Od_State.Fan_State = 0;
+            }
+            else if(KeyHandle.Od_State.Od_Num ==1)
+            {
+              KeyHandle.Od_State.Led_P1_State++;
+              if(KeyHandle.Od_State.Led_P1_State > 1)
+                KeyHandle.Od_State.Led_P1_State = 0;              
+            }
+            else if(KeyHandle.Od_State.Od_Num ==2) 
+            {
+              KeyHandle.Od_State.Led_P2_State++;
+              if(KeyHandle.Od_State.Led_P2_State > 1)
+                KeyHandle.Od_State.Led_P2_State = 0;
+            }
+            else if(KeyHandle.Od_State.Od_Num ==3)
+            {
+              if(KeyHandle.Od_State.Led_P2_State == 0)
+              {
+                KeyHandle.Od_State.Door_State++;
+                if(KeyHandle.Od_State.Door_State > 1)
+                  KeyHandle.Od_State.Door_State = 0;
+              }
+              else
+                KeyHandle.Od_State.Door_State = 0;              
+            }
+          }
+          if(KeyHandle.Oper_Mode_Dis_State == 2)
+          {
+            if(KeyHandle.Pm_State.Pm_Num ==0)
+            {
+              KeyHandle.Pm_State.Fan_State++;
+              if(KeyHandle.Pm_State.Fan_State > 3)
+                KeyHandle.Pm_State.Fan_State = 0;
+            }
+            else if(KeyHandle.Pm_State.Pm_Num ==1)
+            {
+              KeyHandle.Pm_State.Led_P1_State++;
+              if(KeyHandle.Pm_State.Led_P1_State > 1)
+                KeyHandle.Pm_State.Led_P1_State = 0;              
+            }
+            else if(KeyHandle.Pm_State.Pm_Num ==2) 
+            {
+              KeyHandle.Pm_State.Led_P2_State++;
+              if(KeyHandle.Pm_State.Led_P2_State > 1)
+                KeyHandle.Pm_State.Led_P2_State = 0;
+            }
+            else if(KeyHandle.Pm_State.Pm_Num ==3)
+            {
+              if(KeyHandle.Pm_State.Led_P2_State == 0)
+              {
+                KeyHandle.Pm_State.Door_State++;
+                if(KeyHandle.Pm_State.Door_State > 1)
+                  KeyHandle.Pm_State.Door_State = 0;
+              }
+              else
+                KeyHandle.Pm_State.Door_State = 0;              
+            }
+            else if(KeyHandle.Pm_State.Pm_Num == 4)
+            {
+              KeyHandle.Pm_State.Pm_Time ++;
+              if(KeyHandle.Pm_State.Pm_Time > 7)
+                KeyHandle.Pm_State.Pm_Time = 0;
+            }
+          }
         }
         else
         {
@@ -169,14 +243,15 @@ void KeyBorad_Hnadle(u8 KeyVaul)
           //   KeyHandle.Oper_Mode_Dis_Time_Set_State = 0;
           if(KeyHandle.Oper_Mode_Dis_State == 2)
           {
-            Pm_Time ++;
-            if(Pm_Time > 7)
-            Pm_Time = 0;
+            KeyHandle.Pm_State.Pm_Num++;
+            if(KeyHandle.Pm_State.Pm_Num > 5)
+              KeyHandle.Pm_State.Pm_Num = 0;            
           }
           else if(KeyHandle.Oper_Mode_Dis_State == 1)
           {
-            
-            
+            KeyHandle.Od_State.Od_Num++;
+            if(KeyHandle.Od_State.Od_Num > 4)
+              KeyHandle.Od_State.Od_Num = 0;
           }
         }
         

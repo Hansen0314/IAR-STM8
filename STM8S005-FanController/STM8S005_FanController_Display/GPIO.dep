@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
     <fileVersion>2</fileVersion>
-    <fileChecksum>368829666</fileChecksum>
+    <fileChecksum>3991319095</fileChecksum>
     <configuration>
         <name>Debug</name>
         <outputs>
@@ -102,6 +102,12 @@
             <file>$PROJ_DIR$\Debug\Obj\stm8s_tim1.__cstat.et</file>
             <file>$PROJ_DIR$\Debug\Obj\stm8s_tim1.o</file>
             <file>$PROJ_DIR$\Debug\Obj\stm8s_tim1.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\CDS1302.__cstat.et</file>
+            <file>$PROJ_DIR$\User\CDS1302.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\CDS1302.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\CDS1302.o</file>
+            <file>$PROJ_DIR$\User\CDS1302.c</file>
+            <file>$PROJ_DIR$\User\cht1621.c</file>
         </outputs>
         <file>
             <name>[ROOT_NODE]</name>
@@ -216,7 +222,7 @@
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 46 65 45 70 28 59 38 72 48 69 29 26 56 54 66 49 53 55 71 61 73</file>
+                    <file> 59 70 28 46 65 45 38 72 48 69 29 26 56 54 66 49 53 55 71 61 73</file>
                 </tool>
             </inputs>
         </file>
@@ -270,7 +276,7 @@
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 71 26 65 66 56 53 54 49 55 61 73 46 38 70 72 45 48 28 69 29 59 81</file>
+                    <file> 56 65 53 26 66 71 54 49 55 61 73 46 38 70 72 45 48 28 69 29 59 81</file>
                 </tool>
             </inputs>
         </file>
@@ -297,7 +303,7 @@
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 56 65 53 26 66 71 81 54 49 55 61 73 16 46 38 70 72 45 48 28 69 29 59</file>
+                    <file> 56 65 53 81 26 66 71 54 49 55 61 73 16 46 38 70 72 45 48 28 69 29 59</file>
                 </tool>
             </inputs>
         </file>
@@ -324,7 +330,7 @@
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 55 65 54 73 49 61 26 56 66 53 71 46 38 70 72 45 48 28 69 29 59 15</file>
+                    <file> 61 65 49 54 55 73 26 56 66 53 71 46 38 70 72 45 48 28 69 29 59 15</file>
                 </tool>
             </inputs>
         </file>
@@ -351,7 +357,7 @@
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 49 17 61 65 54 55 73 81 26 56 66 53 71 85 46 38 70 72 45 48 28 69 29 59</file>
+                    <file> 49 81 61 65 54 55 73 17 26 56 66 53 71 85 46 38 70 72 45 48 28 69 29 59</file>
                 </tool>
             </inputs>
         </file>
@@ -378,7 +384,7 @@
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 61 49 81 54 55 73 65 26 56 66 53 71 46 38 70 72 45 48 28 69 29 59 17</file>
+                    <file> 56 65 53 26 66 71 81 54 49 55 61 73 17 46 38 70 72 45 48 28 69 29 59</file>
                 </tool>
             </inputs>
         </file>
@@ -401,11 +407,11 @@
             <inputs>
                 <tool>
                     <name>ICCSTM8</name>
-                    <file> 65 26 38 56 70 54 72 66 45 49 48 53 28 55 69 71 61 29 59 73 46 25 74 50 22 30 42 40 39 27 67 44 81 85 17 15 16</file>
+                    <file> 65 26 38 56 70 54 72 66 45 49 48 53 28 55 69 71 61 29 59 73 46 25 74 50 22 30 42 40 39 27 67 44 81 85 17 15 16 98</file>
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 59 70 65 15 28 81 16 46 45 44 40 25 85 17 38 72 48 69 29 22 30 42 26 56 54 66 49 53 55 71 61 73 74 50 67 39 27</file>
+                    <file> 65 66 15 26 71 67 27 17 81 16 56 53 25 85 98 54 49 55 61 73 74 50 39 46 38 70 72 45 48 28 69 29 59 22 44 30 42 40</file>
                 </tool>
             </inputs>
         </file>
@@ -467,18 +473,45 @@
             <name>$PROJ_DIR$\Debug\Exe\GPIO.out</name>
             <outputs>
                 <tool>
-                    <name>OBJCOPY</name>
-                    <file> 62</file>
-                </tool>
-                <tool>
                     <name>ILINK</name>
                     <file> 32</file>
+                </tool>
+                <tool>
+                    <name>OBJCOPY</name>
+                    <file> 62</file>
                 </tool>
             </outputs>
             <inputs>
                 <tool>
                     <name>ILINK</name>
-                    <file> 24 78 89 13 82 87 63 68 75 20 95 86 33 31 64 51</file>
+                    <file> 24 100 78 89 13 82 87 63 68 75 20 95 86 33 31 64 51</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\User\CDS1302.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 100</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 99</file>
+                </tool>
+                <tool>
+                    <name>__cstat</name>
+                    <file> 97</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 98 65 26 38 56 70 54 72 66 45 49 48 53 28 55 69 71 61 29 59 73 46</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 49 65 61 54 55 73 26 56 66 53 71 46 38 70 72 45 48 28 69 29 59 98</file>
                 </tool>
             </inputs>
         </file>

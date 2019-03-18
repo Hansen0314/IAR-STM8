@@ -260,6 +260,23 @@ struct ALLDATE{
 	struct MD md;
 	struct HMS hms;
 };
+struct Od_StatE
+{
+  u8 Led_P2_State;
+  u8 Led_P1_State;
+  u8 Door_State;
+  u8 Fan_State;
+  u8 Od_Num;
+};
+struct PM_StatE
+{
+  u8 Led_P2_State;
+  u8 Led_P1_State;
+  u8 Door_State;
+  u8 Fan_State;
+  u8 Pm_Time;
+  u8 Pm_Num;
+};
 struct KEYHANDLE{
     u8 Fan_Seepd_State;
     u8 Led_P1_State;
@@ -271,6 +288,8 @@ struct KEYHANDLE{
     u8 Oper_Mode_State;
     u8 Oper_Mode_Dis_State;
     u8 Oper_Mode_Dis_Time_Set_State;
+    struct Od_StatE Od_State;
+    struct PM_StatE Pm_State;
 };
 struct Hepa 
 {

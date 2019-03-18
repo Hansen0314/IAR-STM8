@@ -2,6 +2,7 @@
 extern u8 Dis_Bling;
 u16 Peripheral_A11_Max = 300;
 u8 Pm_Time = 0;
+u8 Od_State;
 //1 ~ 11
 const unsigned char Dis_Digitron_Addr[] = 
 {
@@ -147,6 +148,7 @@ void ht1621_Char_write(u8 cs ,u8 addr, u8 data ,u8 status)
 {
  // u8 cs_1=cs;
   u8 t_data;
+
   if(cs == 1)t_data=cs1_ram_map[addr];
   else if (cs == 2)t_data=cs2_ram_map[addr];
   
@@ -380,7 +382,7 @@ void Oper_Mode_Disply(u8 Oper_Mode_State,u8 Oper_Mode_Dis_State)
         ht1621_Char_write(1,T_Addr[10],T_Mask[10],0);
         ht1621_Char_write(1,T_Addr[11],T_Mask[11],0);
         ht1621_Char_write(1,T_Addr[12],T_Mask[12],1);
-        //Dis_Bling = 0;
+        Dis_Bling = 0;
       }
       else
       {
@@ -418,7 +420,7 @@ void Week_Display()
   
 }
 */
-void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandle)
+void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandl)
 {
     
     ht1621_Char_write(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1);
@@ -439,28 +441,18 @@ void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandle)
       ht1621_Char_write(2,T_Addr[32],T_Mask[32],1);
       ht1621_Char_write(2,T_Addr[33],T_Mask[33],1);      
     }
-    if(KeyHandle.Oper_Mode_State == 1)
+    
+    if(KeyHandle.Oper_Mode_Dis_State == 2)
     {
-      if(KeyHandle.Oper_Mode_Dis_State == 2)
-      {
-        if(Dis_Bling == 1)
-        {
-          ht1621_Char_write(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[Pm_Time/10],1);
-          ht1621_Char_write(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[Pm_Time%10],1);
-          Dis_Bling = 0;
-        }
-        else
-        {
-          ht1621_Char_write(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[8],0);
-          ht1621_Char_write(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[8],0);        
-        }
-      }
+        ht1621_Char_write(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.Pm_Time/10],1);
+        ht1621_Char_write(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.Pm_Time%10],1);
     }
-    else
+    else if(KeyHandle.Oper_Mode_Dis_State == 0)
     {
-       ht1621_Char_write(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day/10],1);
-       ht1621_Char_write(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day%10],1);     
+        ht1621_Char_write(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day/10],1);
+        ht1621_Char_write(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day%10],1);     
     }
+    /*
     switch(alldate.md.date)
     {
       case 1:
@@ -478,6 +470,7 @@ void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandle)
       case 7:
       break;    
     }
+    */
 }
 /*
 void Fan_Speed_State_Display(struct KEYHANDLE KeyHandle)
@@ -534,15 +527,19 @@ void Door_State_Display(u8 Door_State)
     case DOOR_UP_STATE:
       ht1621_Char_write(1,T_Addr[16],T_Mask[16],1);
       ht1621_Char_write(1,T_Addr[17],T_Mask[17],0);
+      ht1621_Char_write(1,T_Addr[18],T_Mask[18],0);
     break;
     case DOOR_DO_STATE:
       ht1621_Char_write(1,T_Addr[16],T_Mask[16],0);
       ht1621_Char_write(1,T_Addr[17],T_Mask[17],1);
+      ht1621_Char_write(1,T_Addr[18],T_Mask[18],0);
     break;
     case DOOR_OFF_STATE:
       ht1621_Char_write(1,T_Addr[16],T_Mask[16],0);
-      ht1621_Char_write(1,T_Addr[17],T_Mask[17],0);           
+      ht1621_Char_write(1,T_Addr[17],T_Mask[17],0);  
+      ht1621_Char_write(1,T_Addr[18],T_Mask[18],1); 
     break;
+    
     default:
     break;
   } 
@@ -569,14 +566,41 @@ void Led_P2_State_Display(u8 Led_P2_State)
     ht1621_Char_write(1,T_Addr[9],T_Mask[9],0);
   }
 }
+void Display_OD()
+{
+  ht1621_Char_write(1,T_Addr[8],T_Mask[8],KeyHandle.Od_State.Led_P1_State);
+  ht1621_Char_write(1,T_Addr[9],T_Mask[9],KeyHandle.Od_State.Led_P2_State);
+  Fan_Speed_State_Display(KeyHandle.Od_State.Fan_State);
+  ht1621_Char_write(1,T_Addr[18],T_Mask[18],KeyHandle.Od_State.Door_State);
+  
+}
 void Display_all(struct Peripheral peripheral,struct KEYHANDLE KeyHandle,struct Hepa Hepa,struct ALLDATE alldate)
 {
-    Led_P2_State_Display(KeyHandle.Led_P2_State);
-    Led_P1_State_Display(KeyHandle.Led_P1_State);
-    Door_State_Display(KeyHandle.Door_State);
-    Fan_Speed_State_Display(KeyHandle.Fan_Seepd_State);
-    Peripheral_Rceive_Display(peripheral,KeyHandle.Fan_Seepd_Max_State);
-    Hepa_Set_Display(Hepa,KeyHandle);
+    if(KeyHandle.Oper_Mode_Dis_State == 0)
+    {
+      Led_P2_State_Display(KeyHandle.Led_P2_State);
+      Led_P1_State_Display(KeyHandle.Led_P1_State);
+      Door_State_Display(KeyHandle.Door_State);
+      Fan_Speed_State_Display(KeyHandle.Fan_Seepd_State);
+      Peripheral_Rceive_Display(peripheral,KeyHandle.Fan_Seepd_Max_State);
+      Hepa_Set_Display(Hepa,KeyHandle);
+      Now_Time_Display(alldate,KeyHandle); 
+    }
+    else if(KeyHandle.Oper_Mode_Dis_State == 1)
+    {
+      Fan_Speed_State_Display(KeyHandle.Od_State.Fan_State);
+      Led_P2_State_Display(KeyHandle.Od_State.Led_P2_State);
+      Led_P1_State_Display(KeyHandle.Od_State.Led_P1_State);
+      ht1621_Char_write(1,T_Addr[18],T_Mask[18],KeyHandle.Od_State.Door_State);
+    }
+    else if(KeyHandle.Oper_Mode_Dis_State == 2)
+    {
+      Fan_Speed_State_Display(KeyHandle.Pm_State.Fan_State);
+      Led_P2_State_Display(KeyHandle.Pm_State.Led_P2_State);
+      Led_P1_State_Display(KeyHandle.Pm_State.Led_P1_State);
+      ht1621_Char_write(1,T_Addr[18],T_Mask[18],KeyHandle.Pm_State.Door_State);
+      Now_Time_Display(alldate,KeyHandle);      
+    }
     Oper_Mode_Disply(KeyHandle.Oper_Mode_State,KeyHandle.Oper_Mode_Dis_State);
-    Now_Time_Display(alldate,KeyHandle);
+      
 }

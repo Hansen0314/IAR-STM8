@@ -8,13 +8,13 @@
 #define IIC_SDA_H     (GPIOC->ODR |=  (1 << 1))
 #define IIC_SDA_L     (GPIOC->ODR &= ~(1 << 1))
 #define IIC_SDA_R     ((GPIOC->IDR &  (1 << 1))>>1)
-
+#if 1
 void delay_us()
 {
     nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();
-    nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();
-    nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();
-    nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();
+//    nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();
+//    nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();
+//    nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();nop();
 }
 
 //初始化IIC
@@ -23,6 +23,8 @@ void IIC_Init(void)
     //由于STM8单片机，可以在输入和输出条件下读取IO口状态，故直接设置为输出。
     GPIO_Init(GPIOC, GPIO_PIN_1, GPIO_MODE_OUT_PP_LOW_SLOW);
     GPIO_Init(GPIOE, GPIO_PIN_5, GPIO_MODE_OUT_PP_LOW_SLOW);
+    GPIO_Init(GPIOC,GPIO_PIN_2, GPIO_MODE_OUT_PP_LOW_SLOW);
+    GPIO_WriteLow(GPIOC,GPIO_PIN_2); 
     IIC_SCL_H;
     IIC_SDA_H;
 }
@@ -54,8 +56,8 @@ u8 IIC_Wait_Ack(void)
 {
     u8 ucErrtime=0;
 
-    IIC_SDA_H;nop();           
-    IIC_SCL_H;nop();
+    IIC_SDA_H;nop();nop(); nop();nop();nop(); nop();  nop(); nop();     
+    IIC_SCL_H;nop();nop();nop();nop();nop();nop();nop();nop();
     while(IIC_SDA_R)
     {
         ucErrtime++;
@@ -130,6 +132,7 @@ u8 IIC_Read_Byte(unsigned char ack)
         IIC_Ack(); //发送ACK   
     return receive;
 }
+
 /*
 void GPIO_WriteBit(GPIO_TypeDef* GPIOx, GPIO_Pin_TypeDef PortPins,u8 State)
 {
@@ -248,23 +251,26 @@ u8 IIC_Read_Byte(unsigned char ack)
         return receive;
 }
 */
+
+
 void ds1302_writeByte(u8 Addr,u8 Data)
 {
 
     IIC_Start();
     IIC_Send_Byte(Addr);
-    while(IIC_Wait_Ack());
+    IIC_Wait_Ack();
     IIC_Send_Byte(Data);
-    while(IIC_Wait_Ack());
+    IIC_Wait_Ack();
     IIC_Stop();
 }
 u8 ds1302_readByte(u8 Addr)
 {
 	u8 data;
     IIC_Start(); 
-	IIC_Send_Byte(Addr);
-    while(IIC_Wait_Ack());
-	data = IIC_Read_Byte(1);
+    IIC_Send_Byte(Addr);
+    //while(IIC_Wait_Ack());
+    IIC_Wait_Ack();
+    data = IIC_Read_Byte(1);
     IIC_Stop();
     Delay_Us(10);
 	return data;
@@ -318,9 +324,6 @@ struct ALLDATE convertToSetTime(struct ALLDATE allDate)
 
 void ds1302_setTime(struct ALLDATE allDate)
 {
-        IIC_Init();
-        GPIO_Init(GPIOC,GPIO_PIN_2, GPIO_MODE_OUT_PP_LOW_SLOW);
-        GPIO_WriteLow(GPIOC,GPIO_PIN_2); 
 	allDate = convertToSetTime(allDate);
 	ds1302_writeByte(0x8e, 0x00);//control为的最高位wp
 	ds1302_writeByte(0x8c, allDate.yd.year); //year
@@ -358,3 +361,4 @@ void Ds1302_Init()
         IIC_Init();
 	ds1302_setTime(allDate);
 }
+#endif
