@@ -11,7 +11,7 @@ void Back_Light_On()
 {
 //    GPIO_WriteHigh(BACK_LIGHT_PROT,BACK_LIGHT_PIN_1);
     GPIO_WriteHigh(BACK_LIGHT_PROT,BACK_LIGHT_PIN_2);
-    GPIO_WriteHigh(BACK_LIGHT_PROT,BACK_LIGHT_PIN_3);
+    //GPIO_WriteHigh(BACK_LIGHT_PROT,BACK_LIGHT_PIN_3);
 //    GPIO_WriteHigh(BACK_LIGHT_PROT,BACK_LIGHT_PIN_4);  
 }
 void Back_Light_Off()

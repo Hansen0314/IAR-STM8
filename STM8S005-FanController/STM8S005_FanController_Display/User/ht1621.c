@@ -53,6 +53,9 @@ const unsigned char S_Mask[] = {0X00,0x08,0x04};
 const unsigned char P_Addr[] = {0X00,0X00,0x02,0X06,0X08,0X0C,0X15,0X17};
 const unsigned char P_Mask[] = {0X00,0x08,0X08,0X08,0X08,0X08,0X08,0X08};
 
+const unsigned char Col_Addr[] = {0x00,0x04};
+const unsigned char Col_Mask[] = {0x00,0X08};
+
 unsigned char cs1_ram_map[33] = 
 {
 	0
@@ -152,12 +155,17 @@ void ht1621_Char_write(u8 cs ,u8 addr, u8 data ,u8 status)
   if(cs == 1)t_data=cs1_ram_map[addr];
   else if (cs == 2)t_data=cs2_ram_map[addr];
   
-  if(status) t_data |= data;
+  if(status)t_data |= data;
   else t_data &= ~data;
   
-  if(cs == 1)cs1_ram_map[addr] = t_data;
-  else if (cs == 2)cs2_ram_map[addr] = t_data;  
-  
+  if(cs == 1)
+  {
+    cs1_ram_map[addr] = t_data;
+  }
+  else if (cs == 2)
+  { 
+    cs2_ram_map[addr] = t_data;  
+  }
   ht1621_write(cs,addr,t_data);
 }
 /*
@@ -267,6 +275,7 @@ void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_Sta
    if(Fan_Seepd_Max_State == 0)
    {
      ht1621_Char_write(1,Dis_Digitron_Addr[1],Cs1_Dis_Digitron_Num[peripheral.a11/100],1);
+     
      ht1621_Char_write(1,Dis_Digitron_Addr[2],Cs1_Dis_Digitron_Num[peripheral.a11%100/10],1);
      ht1621_Char_write(1,Dis_Digitron_Addr[3],Cs1_Dis_Digitron_Num[peripheral.a11%10],1);
    }
@@ -412,29 +421,103 @@ void Oper_Mode_Disply(u8 Oper_Mode_State,u8 Oper_Mode_Dis_State)
   
 }
 
-/*
-void Week_Display()
-{
 
-  
-  
+void Week_Display(u8 date)
+{
+    switch(date)
+    {
+      case 1:
+        ht1621_Char_write(2,T_Addr[22],T_Mask[22],1);
+        ht1621_Char_write(2,T_Addr[23],T_Mask[23],0);
+        ht1621_Char_write(2,T_Addr[24],T_Mask[24],0);
+        ht1621_Char_write(2,T_Addr[25],T_Mask[25],0);
+        ht1621_Char_write(2,T_Addr[26],T_Mask[26],0);
+        ht1621_Char_write(2,T_Addr[27],T_Mask[27],0);
+        ht1621_Char_write(2,T_Addr[28],T_Mask[28],0);
+      break;
+      case 2:
+        ht1621_Char_write(2,T_Addr[22],T_Mask[22],0);
+        ht1621_Char_write(2,T_Addr[23],T_Mask[23],1);
+        ht1621_Char_write(2,T_Addr[24],T_Mask[24],0);
+        ht1621_Char_write(2,T_Addr[25],T_Mask[25],0);
+        ht1621_Char_write(2,T_Addr[26],T_Mask[26],0);
+        ht1621_Char_write(2,T_Addr[27],T_Mask[27],0);
+        ht1621_Char_write(2,T_Addr[28],T_Mask[28],0);
+      break;
+      case 3:
+        ht1621_Char_write(2,T_Addr[22],T_Mask[22],0);
+        ht1621_Char_write(2,T_Addr[23],T_Mask[23],0);
+        ht1621_Char_write(2,T_Addr[24],T_Mask[24],1);
+        ht1621_Char_write(2,T_Addr[25],T_Mask[25],0);
+        ht1621_Char_write(2,T_Addr[26],T_Mask[26],0);
+        ht1621_Char_write(2,T_Addr[27],T_Mask[27],0);
+        ht1621_Char_write(2,T_Addr[28],T_Mask[28],0);
+      break;
+      case 4:
+        ht1621_Char_write(2,T_Addr[22],T_Mask[22],0);
+        ht1621_Char_write(2,T_Addr[23],T_Mask[23],0);
+        ht1621_Char_write(2,T_Addr[24],T_Mask[24],0);
+        ht1621_Char_write(2,T_Addr[25],T_Mask[25],1);
+        ht1621_Char_write(2,T_Addr[26],T_Mask[26],0);
+        ht1621_Char_write(2,T_Addr[27],T_Mask[27],0);
+        ht1621_Char_write(2,T_Addr[28],T_Mask[28],0);
+      break;              
+      case 5:             
+        ht1621_Char_write(2,T_Addr[22],T_Mask[22],0);
+        ht1621_Char_write(2,T_Addr[23],T_Mask[23],0);
+        ht1621_Char_write(2,T_Addr[24],T_Mask[24],0);
+        ht1621_Char_write(2,T_Addr[25],T_Mask[25],0);
+        ht1621_Char_write(2,T_Addr[26],T_Mask[26],1);
+        ht1621_Char_write(2,T_Addr[27],T_Mask[27],0);
+        ht1621_Char_write(2,T_Addr[28],T_Mask[28],0);
+      break;              
+      case 6:             
+        ht1621_Char_write(2,T_Addr[22],T_Mask[22],0);
+        ht1621_Char_write(2,T_Addr[23],T_Mask[23],0);
+        ht1621_Char_write(2,T_Addr[24],T_Mask[24],0);
+        ht1621_Char_write(2,T_Addr[25],T_Mask[25],0);
+        ht1621_Char_write(2,T_Addr[26],T_Mask[26],0);
+        ht1621_Char_write(2,T_Addr[27],T_Mask[27],1);
+        ht1621_Char_write(2,T_Addr[28],T_Mask[28],0);
+      break;
+      case 7:
+        ht1621_Char_write(2,T_Addr[22],T_Mask[22],0);
+        ht1621_Char_write(2,T_Addr[23],T_Mask[23],0);
+        ht1621_Char_write(2,T_Addr[24],T_Mask[24],0);
+        ht1621_Char_write(2,T_Addr[25],T_Mask[25],0);
+        ht1621_Char_write(2,T_Addr[26],T_Mask[26],0);
+        ht1621_Char_write(2,T_Addr[27],T_Mask[27],0);
+        ht1621_Char_write(2,T_Addr[28],T_Mask[28],1);
+      break;    
+      default:
+      break;
+    }  
 }
-*/
+
 void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandl)
 {
     
     ht1621_Char_write(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1);
     ht1621_Char_write(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],1);
-    ht1621_Char_write(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],1); 
-    ht1621_Char_write(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],1); 
-    
+
+    ht1621_Char_write(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.sec/10],1); 
+    ht1621_Char_write(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.sec%10],1); 
+       
     ht1621_Char_write(2,Dis_Digitron_Addr[20],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year/10],1);
-    ht1621_Char_write(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year*10],1);
-    ht1621_Char_write(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month/10],1); 
+    ht1621_Char_write(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year%10],1);
+    ht1621_Char_write(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month/10],1);    
+    if(alldate.hms.sec%2)
+    {
+      ht1621_Char_write(2,Col_Addr[1],Col_Mask[1],0);
+    }
+    else
+    {
+      ht1621_Char_write(2,Col_Addr[1],Col_Mask[1],1);
+    }
     if(alldate.md.month > 9) 
     {  
-      ht1621_Char_write(2,T_Addr[32],T_Mask[32],1);
-      ht1621_Char_write(2,T_Addr[33],T_Mask[33],0);
+      ht1621_Char_write(2,T_Addr[32],T_Mask[32],0);
+      ht1621_Char_write(2,T_Addr[33],T_Mask[33],1);
     }
     else
     {
@@ -452,25 +535,7 @@ void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandl)
         ht1621_Char_write(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day/10],1);
         ht1621_Char_write(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day%10],1);     
     }
-    /*
-    switch(alldate.md.date)
-    {
-      case 1:
-      break;
-      case 2:
-      break;
-      case 3:
-      break;
-      case 4:
-      break;
-      case 5:
-      break;
-      case 6:
-      break;
-      case 7:
-      break;    
-    }
-    */
+    Week_Display(alldate.md.date);
 }
 /*
 void Fan_Speed_State_Display(struct KEYHANDLE KeyHandle)

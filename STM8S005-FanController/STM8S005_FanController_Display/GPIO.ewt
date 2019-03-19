@@ -2118,9 +2118,6 @@
     <group>
         <name>User</name>
         <file>
-            <name>$PROJ_DIR$\User\CDS1302.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\User\delay.c</name>
         </file>
         <file>
