@@ -47,6 +47,7 @@
 
 void ht1621_Clear();
 void ht1621_write(u8 cs ,u8 addr, u8 data);
+void ht1621_Char_write1(u8 cs ,u8 addr, u8 data ,u8 status,u8 xin);
 void ht1621_Char_write(u8 cs ,u8 addr, u8 data ,u8 status);
 void ht1621_init();
 void ht1621_char_display();
@@ -72,4 +73,5 @@ extern const unsigned char Cs2_16_19_Dis_Digitron_Num[];
 extern const unsigned char Cs2_20_24_Dis_Digitron_Num[];
 
 extern u8 Dis_Bling;
+extern u16 hepa_time;
 #endif

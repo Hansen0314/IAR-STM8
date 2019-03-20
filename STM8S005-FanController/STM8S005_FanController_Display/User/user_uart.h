@@ -12,11 +12,10 @@
 #define LED_P2_ON   0X07
 #define LED_P2_OFF  0X08
 #define DOOR_UP_ON  0X09
-#define DOOR_UP_OFF 0X0A
 #define DOOR_DO_ON  0X0B
-#define DOOR_DO_OFF 0X0C
-#define ER_UP       0X0D
-#define ER_DOWN     0X0E
+#define DOOR_OFF   0x0c
+#define ER_ON       0X0D
+#define ER_OFF     0X0E
 #define DP_HIGH     0X0F
 #define DP_LOW     0X10
 #define FR_HIGH    0X11
@@ -30,4 +29,5 @@ void uart2SendString(uint8_t* Data,uint16_t len);
 uint8_t uart2ReceiveByte(void);
 void Uart_IT_Receive_Hnadle(u8 data);
 extern struct Peripheral Peripheral_Realy;
+void Uart_Transmit_Hnadle(struct KEYHANDLE KeyHandle);
 #endif

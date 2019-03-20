@@ -13,8 +13,24 @@ uint8_t ii;
 extern u8 RxBuffer[RxBufferSize];
 extern u8 UART_RX_NUM;
 struct ALLDATE Ds1302_Alldate;
+struct ALLDATE Ds1302_Alldate_Init;
 extern u16 Peripheral_A11_Max;
 extern u8 Pm_Time;
+u8 day;
+u8 hour;
+u8 KeyVaule;
+void Hepa_Time_Conversion()
+{
+    day = Ds1302_Alldate.yd.day - Ds1302_Alldate_Init.yd.day; 
+    hour = Ds1302_Alldate.hms.hour - Ds1302_Alldate_Init.hms.hour;
+    hepa_time = day*24 + hour;
+}
+void Peripheral_Conversion()
+{
+  peripheral.a11 = (int)((float)(peripheral.a11/1024)*Peripheral_A11_Max);
+  peripheral.a12 = (int)((float)(peripheral.a11/1024)*100);
+  peripheral.a13 = (int)((float)(peripheral.a11/1024)*100);
+}
 void main()
 {  
     u8 i = 0;
@@ -26,30 +42,42 @@ void main()
     Tim4_Init();
     Tim1_Init();
     Gpio_Init();
-    peripheral = Peripheral_Realy;
-    peripheral.a11 = 245;
+    peripheral.a11 = 1;
     peripheral.a12 = 648;
     peripheral.a13 = 50;
     peripheral.Fr = 0;
     peripheral.Dp = 0;
+    KeyHandle.Fan_Seepd_State = 0;
+    hepa.Fan_Seepd = 2;
+    
+    KeyHandle.Door_State = 1;
     ht1621_init();
     enableInterrupts();
     KeyBorad_PinInit();
     Back_Light_On();
     Ds1302_Init();
     Ds1302_Alldate = ds1302_readTime(); 
+    Ds1302_Alldate_Init = Ds1302_Alldate;
     printf("%d \n",Ds1302_Alldate.yd.year);
-    KeyHandle.Fan_Seepd_State = 0;
-    hepa.Fan_Seepd = 999;
+    
     
 #endif  
     while(1)
     {
 #if 1     
+      peripheral = Peripheral_Realy;
+      Peripheral_Conversion();
       Ds1302_Alldate = ds1302_readTime();
-      Delay_Ms(1000);
-      KeyBorad_Hnadle(KeyBorad_Scan());
-      Display_all(peripheral,KeyHandle,hepa,Ds1302_Alldate);        
+      Hepa_Time_Conversion();
+      KeyVaule=KeyBorad_Scan();
+      if(KeyVaule !=KEYNULL)
+      {
+        KeyBorad_Hnadle(KeyVaule);
+        Uart_Transmit_Hnadle(KeyHandle);
+      }
+      Display_all(peripheral,KeyHandle,hepa,Ds1302_Alldate);
+      
+      //ht1621_Char_write1(1,T_Addr[15],T_Mask[15],0,0);
 #endif
     }
 }

@@ -402,7 +402,7 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
 	Res =(uint8_t)UART2->DR;
         /*(USART1->DR);读取接收到的数据,当读完数据后自动取消RXNE的中断标志位*/
         Uart_IT_Receive_Hnadle(Res);
-	   		 
+	  		 
     }
  }
 #endif /* STM8S105 or STM8AF626x */

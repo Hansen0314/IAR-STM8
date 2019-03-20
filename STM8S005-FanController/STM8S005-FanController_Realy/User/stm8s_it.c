@@ -25,6 +25,7 @@
 #include "stm8s_it.h"
 #include "stm8s_conf.h"
 #include "delay.h"
+#include "user_uart.h"
 /** @addtogroup Template_Project
   * @{
   */
@@ -39,7 +40,7 @@
 #define RxBufferSize 64
 uint8_t RxBuffer[RxBufferSize];
 uint8_t UART_RX_NUM=0;
-
+uint8_t Res_Last;
 #ifdef _COSMIC_
 /**
   * @brief Dummy Interrupt routine
@@ -386,30 +387,15 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
     /* In order to detect unexpected events during development,
        it is recommended to set a breakpoint on the following instruction.
     */
-	uint8_t Res;
+    uint8_t Res;
     if(UART2->SR & UART2_FLAG_RXNE)  
     {/*接收中断(接收到的数据必须是0x0d 0x0a结尾)*/
+        
 	Res =(uint8_t)UART2->DR;
         /*(USART1->DR);读取接收到的数据,当读完数据后自动取消RXNE的中断标志位*/
-	if(( UART_RX_NUM&0x80)==0)/*接收未完成*/
-	{
-	    if( UART_RX_NUM&0x40)/*接收到了0x0d*/
-		{
-		  if(Res!=0x0a) UART_RX_NUM=0;/*接收错误,重新开始*/
-		  else  UART_RX_NUM|=0x80;	/*接收完成了 */
-		}
-            else /*还没收到0X0D*/
-              {	
-                if(Res==0x0d) UART_RX_NUM|=0x40;
-                else
-                  {
-                    RxBuffer[ UART_RX_NUM&0X3F]=Res ;
-                     UART_RX_NUM++;
-                      if( UART_RX_NUM>63) UART_RX_NUM=0;/*接收数据错误,重新开始接收*/  
-                  }		 
-	      }
-	 }  		 
+        Uart_IT_Receive_Control(Res);
       }
+    //Res_Last = Res;
  }
 #endif /* STM8S105 or STM8AF626x */
 

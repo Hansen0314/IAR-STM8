@@ -199,6 +199,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
       {
         if(KeyHandle.HEAP_Dis_State == 1)
         {  
+
           hepa.Fan_Seepd++;
           if(hepa.Fan_Seepd > 998)
             hepa.Fan_Seepd = 0;
@@ -238,9 +239,6 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         }
         else if(KeyHandle.Oper_Mode_State == 1)
         {
-          // KeyHandle.Oper_Mode_Dis_Time_Set_State ++;
-          // if(KeyHandle.Oper_Mode_Dis_Time_Set_State > 1)
-          //   KeyHandle.Oper_Mode_Dis_Time_Set_State = 0;
           if(KeyHandle.Oper_Mode_Dis_State == 2)
           {
             KeyHandle.Pm_State.Pm_Num++;

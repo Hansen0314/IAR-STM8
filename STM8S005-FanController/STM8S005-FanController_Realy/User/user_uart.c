@@ -48,7 +48,7 @@ void Uart_IT_Receive_Control(u8 data)
   switch(data)
   {
     case FAN_OFF:  GPIO_WriteHigh(FAN_PORT,FAN_L_PIN);
-                    GPIO_WriteHigh(FAN_PORT,FAN_M_PIN);
+                   GPIO_WriteHigh(FAN_PORT,FAN_M_PIN);
                    GPIO_WriteHigh(FAN_PORT,FAN_B_PIN);
     break;	
     case FAN_ON_L: GPIO_WriteLow(FAN_PORT,FAN_L_PIN);
@@ -66,14 +66,16 @@ void Uart_IT_Receive_Control(u8 data)
     case LED_P2_OFF: GPIO_WriteHigh(LED_PORT,LED_P2_PIN);
     break;
     case DOOR_UP_ON:  GPIO_WriteLow(DOOR_UP_PORT,DOOR_UP_PIN);
-    break;
-    case DOOR_UP_OFF: GPIO_WriteHigh(DOOR_UP_PORT,DOOR_UP_PIN);
     break;		
     case DOOR_DO_ON:  GPIO_WriteLow(DOOR_DO_PORT,DOOR_DO_PIN);
     break;
-    case DOOR_DO_OFF: GPIO_WriteHigh(DOOR_DO_PORT,DOOR_DO_PIN);
+    case DOOR_OFF:  GPIO_WriteHigh(DOOR_DO_PORT,DOOR_DO_PIN);
+                    GPIO_WriteHigh(DOOR_DO_PORT,DOOR_DO_PIN); 
     break;			
-  
+    case ER_ON: GPIO_WriteLow(ER_PORT,ER_PIN);
+    break;
+    case ER_OFF: GPIO_WriteHigh(ER_PORT,ER_PIN);
+    break;    
   }
 }
 void Uart_Send_data(struct Peripheral data)

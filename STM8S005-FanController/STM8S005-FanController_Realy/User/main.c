@@ -22,6 +22,10 @@ void main()
     Adc_Init();
     Tim4_Init();
     enableInterrupts();
+//    GPIO_WriteHigh(FAN_PORT,FAN_L_PIN);
+//    Delay_Ms(1000);
+//    GPIO_WriteLow(FAN_PORT,FAN_L_PIN);
+//    Delay_Ms(1000);    
     while(1)
     {
         peripheral.Dp = GPIO_ReadInputPin(DP_PORT,DP_PIN);
@@ -30,10 +34,6 @@ void main()
         peripheral.a12 = Adc_Concersion(A12_CHANNEL);
         peripheral.a13 = Adc_Concersion(A13_CHANNEL);
         Uart_Send_data(peripheral);
-        Delay_Ms(1000);
-        printf("a11 is %d \n",(int)peripheral.a11);
-        printf("a12 is %d \n",(int)peripheral.a12);
-        printf("a13 is %d \n",(int)peripheral.a13);
     }
 }
 

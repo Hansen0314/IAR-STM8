@@ -3,9 +3,6 @@
 #include "user_uart.h"
 u8 IT_Receive_A,IT_Receive_A_num;
 struct Peripheral Peripheral_Realy;
-/*1位起始位 8位数据位 结束位由CR3设置 不使用奇偶校验 不使能奇偶校验中断*/
-/*使能发送和接收 接收中断使能 禁止发送中断*/
-/*设置1位停止位 不使能SCLK，波特率115200*/  
 void uart2Init()
 {
     UART2_DeInit();
@@ -15,21 +12,18 @@ void uart2Init()
     UART2_Cmd(ENABLE);
     
 }
-//串口发送一个字节
 void uart2SendByte(uint8_t data)
 {
     UART2->DR=data;
    /* Loop until the end of transmission */
    while (!(UART2->SR & UART2_FLAG_TXE));
 }
-//串口改善字符串
 void uart2SendString(uint8_t* Data,uint16_t len)
 {
   uint16_t i=0;
   for(;i<len;i++)
     uart2SendByte(Data[i]);
 }
-//串口接收一个字节
 uint8_t uart2ReceiveByte(void)
 {
      uint8_t USART2_RX_BUF; 
@@ -37,8 +31,7 @@ uint8_t uart2ReceiveByte(void)
      USART2_RX_BUF=(uint8_t)UART2->DR;
      return  USART2_RX_BUF;
 }
-/*将Printf内容发往串口*/ 
-#if 0
+#if 1
 int fputc(int ch, FILE *f)
 {  
   UART2->DR=(unsigned char)ch;
@@ -105,4 +98,65 @@ void Uart_IT_Receive_Hnadle(u8 data)
   }
 
    
+}
+void Uart_Transmit_Hnadle(struct KEYHANDLE KeyHandle)
+{
+  uint8_t Transmit_Data;
+  
+  if(KeyHandle.Led_P1_State)
+  {
+    Transmit_Data = LED_P1_ON;
+    uart2SendByte(Transmit_Data);
+  }
+  else
+  {
+    Transmit_Data = LED_P1_OFF;
+    uart2SendByte(Transmit_Data);
+  }
+  if(KeyHandle.Led_P2_State)
+  {
+    Transmit_Data = LED_P2_ON;
+    uart2SendByte(Transmit_Data);
+  }
+  else
+  {
+    Transmit_Data = LED_P2_OFF;
+    uart2SendByte(Transmit_Data);
+  } 
+  if(KeyHandle.Fan_Seepd_State == 0)
+  {
+    Transmit_Data = FAN_OFF;
+    uart2SendByte(Transmit_Data);
+  }
+  else if(KeyHandle.Fan_Seepd_State == 1)
+  {
+    Transmit_Data = FAN_ON_L;
+    uart2SendByte(Transmit_Data);
+  }
+  else if(KeyHandle.Fan_Seepd_State == 2)
+  {
+    Transmit_Data = FAN_ON_M;
+    uart2SendByte(Transmit_Data);
+  }     
+  else
+  {
+    Transmit_Data = FAN_ON_B;
+    uart2SendByte(Transmit_Data);
+  }
+  if(KeyHandle.Door_State == 1)
+  {
+    Transmit_Data = DOOR_OFF;
+    uart2SendByte(Transmit_Data);
+  }
+  else if(KeyHandle.Door_State == 2)
+  {
+    Transmit_Data = DOOR_UP_ON;
+    uart2SendByte(Transmit_Data);
+  }
+  else
+  {
+    Transmit_Data = DOOR_DO_ON;
+    uart2SendByte(Transmit_Data);
+  }
+  
 }
