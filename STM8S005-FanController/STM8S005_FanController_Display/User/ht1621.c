@@ -3,7 +3,7 @@ extern u8 Dis_Bling;
 u16 Peripheral_A11_Max = 300;
 u8 Pm_Time = 0;
 u16 hepa_time;
-
+extern u8 Dis_Door_Bling;
 //1 ~ 11
 const unsigned char Dis_Digitron_Addr[] = 
 {
@@ -351,9 +351,15 @@ void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_Sta
    
 	ht1621_Char_write1(1,Dis_Digitron_Addr[7],Cs1_Dis_Digitron_Num[peripheral.a13/10],1,1);
 	ht1621_Char_write1(1,Dis_Digitron_Addr[8],Cs1_Dis_Digitron_Num[peripheral.a13%10],1,1);
-           
-   if(peripheral.Fr + peripheral.Dp) ht1621_Char_write1(1,T_Addr[2],T_Mask[2],1,0);
-   else ht1621_Char_write1(1,T_Addr[2],T_Mask[2],0,0);  
+        
+      if(peripheral.Dp & peripheral.Fr) ht1621_Char_write1(1,T_Addr[2],T_Mask[2],0,0);
+      else ht1621_Char_write1(1,T_Addr[2],T_Mask[2],1,0);
+      
+      if(peripheral.Dp == 1) ht1621_Char_write1(1,T_Addr[14],T_Mask[14],0,0);
+      else if (peripheral.Dp == 0) ht1621_Char_write1(1,T_Addr[14],T_Mask[14],1,0);
+      
+      if(peripheral.Fr == 1) ht1621_Char_write1(1,T_Addr[13],T_Mask[13],0,0);
+      else if (peripheral.Fr == 0) ht1621_Char_write1(1,T_Addr[13],T_Mask[13],1,0);  
 }
 void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle)
 {
@@ -637,27 +643,46 @@ void Fan_Speed_State_Display(u8 Fan_Seepd_State)
 }
 void Door_State_Display(u8 Door_State)
 {
-  switch(Door_State)
-  {
-    case DOOR_UP_STATE:
-      ht1621_Char_write1(1,T_Addr[16],T_Mask[16],1,0);
-      ht1621_Char_write1(1,T_Addr[17],T_Mask[17],0,0);
-      ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
-    break;
-    case DOOR_DO_STATE:
-      ht1621_Char_write1(1,T_Addr[16],T_Mask[16],0,0);
-      ht1621_Char_write1(1,T_Addr[17],T_Mask[17],1,0);
-      ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
-    break;
-    case DOOR_OFF_STATE:
-      ht1621_Char_write1(1,T_Addr[16],T_Mask[16],0,0);
-      ht1621_Char_write1(1,T_Addr[17],T_Mask[17],0,0);  
-      ht1621_Char_write1(1,T_Addr[18],T_Mask[18],1,0); 
-    break;
-    
-    default:
-    break;
-  } 
+
+    switch(Door_State)
+    {
+      
+      case DOOR_UP_STATE:
+        if(Dis_Door_Bling  == 1)
+        {
+          ht1621_Char_write1(1,T_Addr[16],T_Mask[16],1,0);
+          ht1621_Char_write1(1,T_Addr[17],T_Mask[17],0,0);
+          ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0); 
+          Dis_Door_Bling = 0;
+        }
+        else
+        {
+          ht1621_Char_write1(1,T_Addr[16],T_Mask[16],0,0);
+          ht1621_Char_write1(1,T_Addr[17],T_Mask[17],0,0);
+          ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);         
+        }
+      break;
+      case DOOR_DO_STATE:
+        if(Dis_Door_Bling == 1)
+        {
+          ht1621_Char_write1(1,T_Addr[16],T_Mask[16],0,0);
+          ht1621_Char_write1(1,T_Addr[17],T_Mask[17],1,0);
+          ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
+          Dis_Door_Bling = 0;
+        }
+        else
+        {
+          ht1621_Char_write1(1,T_Addr[16],T_Mask[16],0,0);
+          ht1621_Char_write1(1,T_Addr[17],T_Mask[17],0,0);
+          ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);         
+        }        
+      break;    
+      default:
+          ht1621_Char_write1(1,T_Addr[16],T_Mask[16],0,0);
+          ht1621_Char_write1(1,T_Addr[17],T_Mask[17],0,0);
+          ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);  
+      break;
+    } 
 }
 void Led_P1_State_Display(u8 Led_P1_State)
 {
@@ -728,7 +753,6 @@ void Display_all(struct Peripheral peripheral,struct KEYHANDLE KeyHandle,struct 
     if((Hepa.Fan_Seepd < peripheral.a11)||(Hepa.Work_Time < hepa_time)) ht1621_Char_write1(1,T_Addr[15],T_Mask[15],1,0);
     else ht1621_Char_write1(1,T_Addr[15],T_Mask[15],0,0);
     
-    if(peripheral.Dp + peripheral.Fr) ht1621_Char_write1(1,T_Addr[2],T_Mask[2],1,0);
-    else ht1621_Char_write1(1,T_Addr[2],T_Mask[2],0,0);
-     
+  
+    
 }

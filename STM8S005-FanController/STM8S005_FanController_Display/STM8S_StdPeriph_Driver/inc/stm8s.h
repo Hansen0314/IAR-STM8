@@ -240,6 +240,8 @@ struct Peripheral
   u16 a11;
   u16 a12;
   u16 a13;
+  u8 Door_Do;
+  u8 Door_Up; 
   
 };
 struct HMS{

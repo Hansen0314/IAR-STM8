@@ -65,12 +65,17 @@ void Uart_IT_Receive_Control(u8 data)
     break;
     case LED_P2_OFF: GPIO_WriteHigh(LED_PORT,LED_P2_PIN);
     break;
-    case DOOR_UP_ON:  GPIO_WriteLow(DOOR_UP_PORT,DOOR_UP_PIN);
+    case DOOR_UP_ON: 
+      GPIO_WriteLow(DOOR_UP_PORT,DOOR_UP_PIN);
+      GPIO_WriteHigh(DOOR_DO_PORT,DOOR_DO_PIN);
     break;		
-    case DOOR_DO_ON:  GPIO_WriteLow(DOOR_DO_PORT,DOOR_DO_PIN);
+    case DOOR_DO_ON:  
+      GPIO_WriteLow(DOOR_DO_PORT,DOOR_DO_PIN);
+      GPIO_WriteHigh(DOOR_UP_PORT,DOOR_UP_PIN);
     break;
-    case DOOR_OFF:  GPIO_WriteHigh(DOOR_DO_PORT,DOOR_DO_PIN);
-                    GPIO_WriteHigh(DOOR_DO_PORT,DOOR_DO_PIN); 
+    case DOOR_OFF: 
+      GPIO_WriteHigh(DOOR_UP_PORT,DOOR_UP_PIN);
+      GPIO_WriteHigh(DOOR_DO_PORT,DOOR_DO_PIN); 
     break;			
     case ER_ON: GPIO_WriteLow(ER_PORT,ER_PIN);
     break;
@@ -84,7 +89,10 @@ void Uart_Send_data(struct Peripheral data)
     else uart2SendByte(FR_LOW);
     if(data.Dp) uart2SendByte(DP_HIGH);
     else uart2SendByte(DP_LOW);
-    
+    if(data.Door_Do) uart2SendByte(DOOR_DO_IN);
+    else uart2SendByte(DOOR_DO_IN_OFF);
+    if(data.Door_Up) uart2SendByte(DOOR_UP_IN);
+    else uart2SendByte(DOOR_UP_IN_OFF);    
     uart2SendByte(A11_VALUE);
     uart2SendByte((u8)(data.a11/256));
     uart2SendByte((u8)(data.a11%256));
@@ -94,4 +102,5 @@ void Uart_Send_data(struct Peripheral data)
     uart2SendByte(A13_VALUE);
     uart2SendByte((u8)(data.a13/256));
     uart2SendByte((u8)(data.a13%256));	
+    
 }

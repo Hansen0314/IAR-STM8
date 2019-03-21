@@ -6,6 +6,7 @@
 #include "KeyBorad.h"
 #include "DS1302.h"
 extern u8 Dis_Bling;
+extern u8 Dis_Door_Bling;
 struct Peripheral peripheral;
 extern struct Hepa hepa;
 uint8_t ii;
@@ -45,8 +46,6 @@ void main()
     peripheral.a11 = 1;
     peripheral.a12 = 648;
     peripheral.a13 = 50;
-    peripheral.Fr = 0;
-    peripheral.Dp = 0;
     KeyHandle.Fan_Seepd_State = 0;
     hepa.Fan_Seepd = 2;
     
@@ -59,13 +58,15 @@ void main()
     Ds1302_Alldate = ds1302_readTime(); 
     Ds1302_Alldate_Init = Ds1302_Alldate;
     printf("%d \n",Ds1302_Alldate.yd.year);
-    
-    
+    peripheral.Fr = 1;
+    peripheral.Dp = 0;
+    KeyHandle.Door_State = 0;
 #endif  
     while(1)
     {
 #if 1     
       peripheral = Peripheral_Realy;
+      
       Peripheral_Conversion();
       Ds1302_Alldate = ds1302_readTime();
       Hepa_Time_Conversion();
@@ -75,6 +76,10 @@ void main()
         KeyBorad_Hnadle(KeyVaule);
         Uart_Transmit_Hnadle(KeyHandle);
       }
+      Peripheral_Realy.Door_Up = 1;
+      Peripheral_Realy.Door_Do = 1;
+      if(Peripheral_Realy.Door_Up | Peripheral_Realy.Door_Do);
+      else Dis_Door_Bling = 1;
       Display_all(peripheral,KeyHandle,hepa,Ds1302_Alldate);
       
       //ht1621_Char_write1(1,T_Addr[15],T_Mask[15],0,0);

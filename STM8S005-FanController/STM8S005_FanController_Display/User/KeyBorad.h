@@ -29,8 +29,7 @@
 #define FAN_H_STATE           0X03
 #define FAN_OFF_STATE         0X00
 #define DOOR_UP_STATE   0X02 
-#define DOOR_DO_STATE   0X03      
-#define DOOR_OFF_STATE  0X01      
+#define DOOR_DO_STATE   0X01          
 
 extern struct KEYHANDLE KeyHandle;
 void KeyBorad_Hnadle(u8 KeyVaul);

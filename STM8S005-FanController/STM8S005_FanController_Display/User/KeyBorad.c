@@ -77,8 +77,8 @@ void KeyBorad_Hnadle(u8 KeyVaul)
       break;
       case S4_DOWN_VALUE: 
         KeyHandle.Door_State ++;
-        if(KeyHandle.Door_State > 3)
-        KeyHandle.Door_State = 1;
+        if(KeyHandle.Door_State > 2)
+        KeyHandle.Door_State = 0;
       break;
       case S5_DOWN_VALUE:
         if(KeyHandle.HEAP_State == 1)

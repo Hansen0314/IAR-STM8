@@ -23,6 +23,10 @@
 #define A11_VALUE   0X13
 #define A12_VALUE   0X14
 #define A13_VALUE   0X15
+#define DOOR_UP_IN_OFF 0X16
+#define DOOR_UP_IN 0X17
+#define DOOR_DO_IN_OFF 0X18
+#define DOOR_DO_IN 0X19
 void Uart_IT_Receive_Control(u8 data);
 void Uart_Send_data(struct Peripheral data);
 void uart2Init();

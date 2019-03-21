@@ -23,6 +23,11 @@
 #define A11_VALUE   0X13
 #define A12_VALUE   0X14
 #define A13_VALUE   0X15
+#define DOOR_UP_IN_OFF 0X16
+#define DOOR_UP_IN 0X17
+#define DOOR_DO_IN_OFF 0X18
+#define DOOR_DO_IN 0X19
+
 void uart2Init();
 void uart2SendByte(uint8_t data);
 void uart2SendString(uint8_t* Data,uint16_t len);

@@ -28,6 +28,7 @@
 #include "user_uart.h"
 u16 Tim1_Count; 
 u8 Dis_Bling;
+u8 Dis_Door_Bling;
 /** @addtogroup Template_Project
   * @{
   */
@@ -240,6 +241,7 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
   {
     Tim1_Count = 0;
     Dis_Bling = 1;
+    Dis_Door_Bling = 1;
   }    
 }
 

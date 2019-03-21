@@ -22,18 +22,32 @@ void main()
     Adc_Init();
     Tim4_Init();
     enableInterrupts();
-//    GPIO_WriteHigh(FAN_PORT,FAN_L_PIN);
-//    Delay_Ms(1000);
-//    GPIO_WriteLow(FAN_PORT,FAN_L_PIN);
-//    Delay_Ms(1000);    
     while(1)
     {
-        peripheral.Dp = GPIO_ReadInputPin(DP_PORT,DP_PIN);
-        peripheral.Fr = GPIO_ReadInputPin(FR_PORT,FR_PIN);
-        peripheral.a11 = Adc_Concersion(A11_CHANNEL);
-        peripheral.a12 = Adc_Concersion(A12_CHANNEL);
-        peripheral.a13 = Adc_Concersion(A13_CHANNEL);
-        Uart_Send_data(peripheral);
+//        peripheral.Dp = GPIO_ReadInputPin(DP_PORT,DP_PIN);
+//        peripheral.Fr = GPIO_ReadInputPin(FR_PORT,FR_PIN); 
+//        peripheral.a11 = Adc_Concersion(A11_CHANNEL);
+//        peripheral.a12 = Adc_Concersion(A12_CHANNEL);
+//        peripheral.a13 = Adc_Concersion(A13_CHANNEL);
+//        //peripheral.Door_Up = GPIO_ReadInputPin(DOOR_UP_PORT,DOOR_UP_PIN);
+//        //peripheral.Door_Do = GPIO_ReadInputPin(DOOR_DO_PORT,DOOR_DO_PIN); 
+//        Uart_Send_data(peripheral);
+//        if(peripheral.Dp & peripheral.Fr)
+//        {
+//          GPIO_WriteLow(ER_PORT,ER_PIN);
+//        }
+//        else
+//        {
+//          GPIO_WriteHigh(ER_PORT,ER_PIN);
+//        }
+//      GPIO_WriteLow(DOOR_DO_PORT,DOOR_DO_PIN);
+//      Delay_Ms(1000);
+//      GPIO_WriteHigh(DOOR_DO_PORT,DOOR_DO_PIN);
+//      Delay_Ms(1000);
+    GPIO_WriteHigh(LED_PORT,LED_P1_PIN);
+    Delay_Ms(1000);
+    GPIO_WriteLow(LED_PORT,LED_P1_PIN);
+    Delay_Ms(1000); 
     }
 }
 

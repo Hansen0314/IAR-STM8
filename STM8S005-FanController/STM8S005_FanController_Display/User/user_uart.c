@@ -93,6 +93,14 @@ void Uart_IT_Receive_Hnadle(u8 data)
       break;
       case A13_VALUE: IT_Receive_A = 3;
       break;
+      case DOOR_UP_IN_OFF: Peripheral_Realy.Door_Up = 0;
+      break;  
+      case DOOR_UP_IN:Peripheral_Realy.Door_Up = 1;
+      break; 
+      case DOOR_DO_IN_OFF:Peripheral_Realy.Door_Do = 0;
+      break; 
+      case DOOR_DO_IN:Peripheral_Realy.Door_Do = 1;
+      break; 
       default :
       break;
   }
@@ -103,26 +111,28 @@ void Uart_Transmit_Hnadle(struct KEYHANDLE KeyHandle)
 {
   uint8_t Transmit_Data;
   
-  if(KeyHandle.Led_P1_State)
+  if(KeyHandle.Led_P1_State == 1)
   {
     Transmit_Data = LED_P1_ON;
     uart2SendByte(Transmit_Data);
   }
-  else
+  else if(KeyHandle.Led_P1_State == 0)
   {
     Transmit_Data = LED_P1_OFF;
     uart2SendByte(Transmit_Data);
   }
-  if(KeyHandle.Led_P2_State)
+  
+  if(KeyHandle.Led_P2_State == 1)
   {
     Transmit_Data = LED_P2_ON;
     uart2SendByte(Transmit_Data);
   }
-  else
+  else if(KeyHandle.Led_P2_State == 0)
   {
     Transmit_Data = LED_P2_OFF;
     uart2SendByte(Transmit_Data);
   } 
+  
   if(KeyHandle.Fan_Seepd_State == 0)
   {
     Transmit_Data = FAN_OFF;
@@ -138,22 +148,23 @@ void Uart_Transmit_Hnadle(struct KEYHANDLE KeyHandle)
     Transmit_Data = FAN_ON_M;
     uart2SendByte(Transmit_Data);
   }     
-  else
+  else if (KeyHandle.Fan_Seepd_State == 3)
   {
     Transmit_Data = FAN_ON_B;
     uart2SendByte(Transmit_Data);
   }
-  if(KeyHandle.Door_State == 1)
+  
+  if(KeyHandle.Door_State == 0)
   {
     Transmit_Data = DOOR_OFF;
     uart2SendByte(Transmit_Data);
   }
-  else if(KeyHandle.Door_State == 2)
+  else if(KeyHandle.Door_State == 1)
   {
     Transmit_Data = DOOR_UP_ON;
     uart2SendByte(Transmit_Data);
   }
-  else
+  else if(KeyHandle.Door_State == 2)
   {
     Transmit_Data = DOOR_DO_ON;
     uart2SendByte(Transmit_Data);
