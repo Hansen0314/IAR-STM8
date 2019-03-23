@@ -4,6 +4,8 @@ u16 Peripheral_A11_Max = 300;
 u8 Pm_Time = 0;
 u16 hepa_time;
 extern u8 Dis_Door_Bling;
+u16 Door_Move_time;
+u8 alldate_Updata;
 //1 ~ 11
 const unsigned char Dis_Digitron_Addr[] = 
 {
@@ -233,12 +235,10 @@ void ht1621_Digitron_write(u8 cs ,u8 addr, u8 data)
 void ht1621_Clear()
 {
   u8 i;
-  for(i=0;i<50;i++)
-  {
-    ht1621_write(1,i,0);
-  }
-  
+  for(i=0;i<50;i++)ht1621_write(1,i,0);
   for(i=0;i<50;i++)ht1621_write(2,i,0);
+  for(i=0;i<33;i++)cs2_ram_map[i] = 0;
+  for(i=0;i<33;i++)cs1_ram_map[i] = 0;
 }
 void ht1621_Full()
 {
@@ -309,7 +309,7 @@ void ht1621_init()
         //ht1621_write(2,Cs2_Dis_Digitron_Addr[12],Cs2_Dis_Digitron_Num[8]);
         //ht1621_write(1,Cs1_Dis_Digitron_Addr[15],Cs1_Dis_Digitron_Num[2]);
         //ht1621_write(1,Dis_Digitron_Addr[3],Cs1_Dis_Digitron_Num[1]);
-        ht1621_char_display();
+        
 }
 
 void set_lcd_on()
@@ -352,8 +352,6 @@ void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_Sta
 	ht1621_Char_write1(1,Dis_Digitron_Addr[7],Cs1_Dis_Digitron_Num[peripheral.a13/10],1,1);
 	ht1621_Char_write1(1,Dis_Digitron_Addr[8],Cs1_Dis_Digitron_Num[peripheral.a13%10],1,1);
         
-      if(peripheral.Dp & peripheral.Fr) ht1621_Char_write1(1,T_Addr[2],T_Mask[2],0,0);
-      else ht1621_Char_write1(1,T_Addr[2],T_Mask[2],1,0);
       
       if(peripheral.Dp == 1) ht1621_Char_write1(1,T_Addr[14],T_Mask[14],0,0);
       else if (peripheral.Dp == 0) ht1621_Char_write1(1,T_Addr[14],T_Mask[14],1,0);
@@ -361,17 +359,18 @@ void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_Sta
       if(peripheral.Fr == 1) ht1621_Char_write1(1,T_Addr[13],T_Mask[13],0,0);
       else if (peripheral.Fr == 0) ht1621_Char_write1(1,T_Addr[13],T_Mask[13],1,0);  
 }
-void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle)
+void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle,struct Peripheral peripheral)
 {
    if(KeyHandle.HEAP_State == 0)
    {
-		ht1621_Char_write1(1,Dis_Digitron_Addr[9],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd/100],1,1);
-		ht1621_Char_write1(1,Dis_Digitron_Addr[10],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd%100/10],1,1);
-		ht1621_Char_write1(1,Dis_Digitron_Addr[11],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd%10],1,1);   
-		ht1621_Char_write1(2,Dis_Digitron_Addr[12],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time/1000],1,1);
-		ht1621_Char_write1(2,Dis_Digitron_Addr[13],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%1000/100],1,1);
-		ht1621_Char_write1(2,Dis_Digitron_Addr[14],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%100/10],1,1); 
-		ht1621_Char_write1(2,Dis_Digitron_Addr[15],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%10],1,1);   
+      ht1621_Char_write1(1,Dis_Digitron_Addr[9],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd/100],1,1);
+      ht1621_Char_write1(1,Dis_Digitron_Addr[10],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd%100/10],1,1);
+      ht1621_Char_write1(1,Dis_Digitron_Addr[11],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd%10],1,1);   
+      ht1621_Char_write1(2,Dis_Digitron_Addr[12],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time/1000],1,1);
+      ht1621_Char_write1(2,Dis_Digitron_Addr[13],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%1000/100],1,1);
+      ht1621_Char_write1(2,Dis_Digitron_Addr[14],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%100/10],1,1); 
+      ht1621_Char_write1(2,Dis_Digitron_Addr[15],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%10],1,1);  
+      //if(hepa.Fan_Seepd > )          
    }
    else
    {
@@ -418,7 +417,16 @@ void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle)
      }
      
    }
-   
+  if((hepa.Fan_Seepd < peripheral.a11)||(hepa.Work_Time < hepa_time)) 
+  {
+    ht1621_Char_write1(1,T_Addr[15],T_Mask[15],1,0);
+    ht1621_Char_write1(1,T_Addr[2],T_Mask[2],1,0);
+  }
+  else 
+  {
+    ht1621_Char_write1(1,T_Addr[15],T_Mask[15],0,0);
+    ht1621_Char_write1(1,T_Addr[2],T_Mask[2],0,0);
+  }
 }
 void Oper_Mode_Disply(u8 Oper_Mode_State,u8 Oper_Mode_Dis_State)
 {
@@ -551,25 +559,111 @@ void Week_Display(u8 date)
 
 void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandl)
 {
-    
-    ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1,1);
-    ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],1,1);
-   
-    ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],1,1); 
-    ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],1,1); 
-       
+    if(KeyHandle.Oper_Mode_Dis_State == 2)
+    {
+        if(KeyHandle.Oper_Mode_State == 1)
+        {
+          if(alldate_Updata == 1)
+          {
+            KeyHandle.Pm_State.On_alldate = alldate;
+            KeyHandle.Pm_State.Off_alldate = alldate;
+            KeyHandle.Pm_State.Off_alldate.hms.min = alldate.hms.min+1;
+            KeyHandle.Pm_State.On_alldate.hms.min = alldate.hms.min+2;
+            alldate_Updata = 0;
+          }
+          if(KeyHandle.Pm_State.Pm_Num > 6)
+          {
+            ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[KeyHandl.Pm_State.Off_alldate.hms.hour/10],1,1);
+            ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[KeyHandl.Pm_State.Off_alldate.hms.hour%10],1,1);
+
+            ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[KeyHandl.Pm_State.Off_alldate.hms.min/10],1,1); 
+            ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[KeyHandl.Pm_State.Off_alldate.hms.min%10],1,1); 
+                 
+            ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.Off_alldate.yd.day/10],1,1);
+            ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.Off_alldate.yd.day%10],1,1);
+            
+            ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
+            ht1621_Char_write1(2,T_Addr[30],T_Mask[30],1,0);  
+          }
+          else
+          {
+            ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[KeyHandl.Pm_State.On_alldate.hms.hour/10],1,1);
+            ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[KeyHandl.Pm_State.On_alldate.hms.hour%10],1,1);
+
+            ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[KeyHandl.Pm_State.On_alldate.hms.min/10],1,1); 
+            ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[KeyHandl.Pm_State.On_alldate.hms.min%10],1,1); 
+                 
+            ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.On_alldate.yd.day/10],1,1);
+            ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.On_alldate.yd.day%10],1,1);
+            ht1621_Char_write1(2,T_Addr[29],T_Mask[29],1,0);
+            ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0); 
+          }  
+        }
+        else
+        {
+          ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],1,1);
+
+          ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],1,1); 
+          ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],1,1); 
+
+          if(alldate.hms.sec%2)
+          {
+            ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],0,0);
+          }
+          else
+          {
+            ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],1,0);
+          } 
+          
+          ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day/10],1,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day%10],1,1); 
+          ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
+          ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[20],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year/10],1,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year%10],1,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month/10],1,1); 
+
+          if(alldate.md.month > 9) 
+          {  
+            ht1621_Char_write1(2,T_Addr[32],T_Mask[32],0,0);
+            ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);
+          }
+          else
+          {
+            ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
+            ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);      
+          }       
+          Week_Display(alldate.md.date);   
+      }
+    }
+    else if(KeyHandle.Oper_Mode_Dis_State == 0)
+    {
+      alldate_Updata = 1;
+      
+      ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1,1);
+      ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],1,1);
+
+      ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],1,1); 
+      ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],1,1); 
+      
+      if(alldate.hms.sec%2)
+      {
+        ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],0,0);
+      }
+      else
+      {
+        ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],1,0);
+      }    
+      ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day/10],1,1);
+      ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day%10],1,1); 
+      ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
+      ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0);
+    }
     ht1621_Char_write1(2,Dis_Digitron_Addr[20],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year/10],1,1);
     ht1621_Char_write1(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year%10],1,1);
-    ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month/10],1,1);  
+    ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month/10],1,1); 
     
-    if(alldate.hms.sec%2)
-    {
-      ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],0,0);
-    }
-    else
-    {
-      ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],1,0);
-    }
     if(alldate.md.month > 9) 
     {  
       ht1621_Char_write1(2,T_Addr[32],T_Mask[32],0,0);
@@ -579,18 +673,7 @@ void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandl)
     {
       ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
       ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);      
-    }
-    
-    if(KeyHandle.Oper_Mode_Dis_State == 2)
-    {
-        ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.Pm_Time/10],1,1);
-        ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.Pm_Time%10],1,1);
-    }
-    else if(KeyHandle.Oper_Mode_Dis_State == 0)
-    {
-        ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day/10],1,1);
-        ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day%10],1,1);     
-    }
+    }       
     Week_Display(alldate.md.date);
 }
 /*
@@ -641,46 +724,72 @@ void Fan_Speed_State_Display(u8 Fan_Seepd_State)
     default: break;
   }  
 }
-void Door_State_Display(u8 Door_State)
+void Door_State_Display(u8 Door_State,struct Peripheral peripheral)
 {
-
     switch(Door_State)
     {
-      
       case DOOR_UP_STATE:
         if(Dis_Door_Bling  == 1)
         {
+          if(Door_Move_time == 0) ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
           ht1621_Char_write1(1,T_Addr[16],T_Mask[16],1,0);
           ht1621_Char_write1(1,T_Addr[17],T_Mask[17],0,0);
-          ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0); 
-          Dis_Door_Bling = 0;
+          Door_Move_time ++;
+          if(Door_Move_time < 20)
+          {
+            if(peripheral.Door_Up) Dis_Door_Bling = 0;
+            else 
+            {
+              Dis_Door_Bling = 1;
+              Door_Move_time = 0;
+            }
+          }
+          else
+          {
+            Dis_Door_Bling = 0;
+            Door_Move_time = 21;
+            ht1621_Char_write1(1,T_Addr[18],T_Mask[18],1,0); 
+          } 
         }
         else
         {
           ht1621_Char_write1(1,T_Addr[16],T_Mask[16],0,0);
-          ht1621_Char_write1(1,T_Addr[17],T_Mask[17],0,0);
-          ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);         
+          ht1621_Char_write1(1,T_Addr[17],T_Mask[17],0,0);        
         }
       break;
       case DOOR_DO_STATE:
         if(Dis_Door_Bling == 1)
         {
+          if(Door_Move_time == 0) ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
+          Door_Move_time ++;
           ht1621_Char_write1(1,T_Addr[16],T_Mask[16],0,0);
           ht1621_Char_write1(1,T_Addr[17],T_Mask[17],1,0);
-          ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
-          Dis_Door_Bling = 0;
+          if(Door_Move_time < 20)
+          {
+            if(peripheral.Door_Do) 
+            {
+              Dis_Door_Bling = 0;
+            }
+            else 
+            {
+              Dis_Door_Bling = 1;
+              Door_Move_time = 0;
+            }
+          }
+          else
+          {
+            Dis_Door_Bling = 0;
+            Door_Move_time = 21;
+            ht1621_Char_write1(1,T_Addr[18],T_Mask[18],1,0);
+          } 
         }
         else
         {
           ht1621_Char_write1(1,T_Addr[16],T_Mask[16],0,0);
-          ht1621_Char_write1(1,T_Addr[17],T_Mask[17],0,0);
-          ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);         
+          ht1621_Char_write1(1,T_Addr[17],T_Mask[17],0,0);       
         }        
       break;    
       default:
-          ht1621_Char_write1(1,T_Addr[16],T_Mask[16],0,0);
-          ht1621_Char_write1(1,T_Addr[17],T_Mask[17],0,0);
-          ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);  
       break;
     } 
 }
@@ -721,38 +830,31 @@ void Display_all(struct Peripheral peripheral,struct KEYHANDLE KeyHandle,struct 
     {
       Led_P2_State_Display(KeyHandle.Led_P2_State);
       Led_P1_State_Display(KeyHandle.Led_P1_State);
-      Door_State_Display(KeyHandle.Door_State);
-      Fan_Speed_State_Display(KeyHandle.Fan_Seepd_State);
-      Peripheral_Rceive_Display(peripheral,KeyHandle.Fan_Seepd_Max_State);
-      Hepa_Set_Display(Hepa,KeyHandle);
+      Door_State_Display(KeyHandle.Door_State,peripheral);
+      Fan_Speed_State_Display(KeyHandle.Fan_State);
+      Hepa_Set_Display(Hepa,KeyHandle,peripheral);
       Now_Time_Display(alldate,KeyHandle); 
       ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
-      ht1621_Char_write1(2,T_Addr[30],T_Mask[30],1,0);      
+      ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0);  
+      Now_Time_Display(alldate,KeyHandle);
     }
     else if(KeyHandle.Oper_Mode_Dis_State == 1)
     {
       Fan_Speed_State_Display(KeyHandle.Od_State.Fan_State);
       Led_P2_State_Display(KeyHandle.Od_State.Led_P2_State);
       Led_P1_State_Display(KeyHandle.Od_State.Led_P1_State);
-      ht1621_Char_write1(1,T_Addr[18],T_Mask[18],KeyHandle.Od_State.Door_State,0);
-      ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
-      ht1621_Char_write1(2,T_Addr[30],T_Mask[30],1,0); 
+      Door_State_Display(KeyHandle.Od_State.Door_State,peripheral);
     }
     else if(KeyHandle.Oper_Mode_Dis_State == 2)
     {
       Fan_Speed_State_Display(KeyHandle.Pm_State.Fan_State);
       Led_P2_State_Display(KeyHandle.Pm_State.Led_P2_State);
       Led_P1_State_Display(KeyHandle.Pm_State.Led_P1_State);
-      ht1621_Char_write1(1,T_Addr[18],T_Mask[18],KeyHandle.Pm_State.Door_State,0);
-      Now_Time_Display(alldate,KeyHandle);  
-      ht1621_Char_write1(2,T_Addr[29],T_Mask[29],1,0);
-      ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0);       
+      Door_State_Display(KeyHandle.Pm_State.Door_State,peripheral);
+      Now_Time_Display(alldate,KeyHandle);       
     }
-    
+    Peripheral_Rceive_Display(peripheral,KeyHandle.Fan_Seepd_Max_State);
+    ht1621_char_display();
     Oper_Mode_Disply(KeyHandle.Oper_Mode_State,KeyHandle.Oper_Mode_Dis_State);
-    if((Hepa.Fan_Seepd < peripheral.a11)||(Hepa.Work_Time < hepa_time)) ht1621_Char_write1(1,T_Addr[15],T_Mask[15],1,0);
-    else ht1621_Char_write1(1,T_Addr[15],T_Mask[15],0,0);
-    
-  
-    
+     
 }

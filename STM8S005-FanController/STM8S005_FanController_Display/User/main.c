@@ -17,6 +17,7 @@ struct ALLDATE Ds1302_Alldate;
 struct ALLDATE Ds1302_Alldate_Init;
 extern u16 Peripheral_A11_Max;
 extern u8 Pm_Time;
+extern u16 Door_Move_time;
 u8 day;
 u8 hour;
 u8 KeyVaule;
@@ -46,7 +47,7 @@ void main()
     peripheral.a11 = 1;
     peripheral.a12 = 648;
     peripheral.a13 = 50;
-    KeyHandle.Fan_Seepd_State = 0;
+    KeyHandle.Fan_State = 0;
     hepa.Fan_Seepd = 2;
     
     KeyHandle.Door_State = 1;
@@ -65,8 +66,31 @@ void main()
     while(1)
     {
 #if 1     
+    if(KeyHandle.Oper_Mode_State == 0)
+    {
+      if((Ds1302_Alldate.yd.day == KeyHandle.Pm_State.Off_alldate.yd.day)&&(Ds1302_Alldate.hms.hour == KeyHandle.Pm_State.Off_alldate.hms.hour)&&(Ds1302_Alldate.hms.min == KeyHandle.Pm_State.Off_alldate.hms.min))
+      {
+        ht1621_Clear();
+        KeyHandle.Pm_State.Led_P1_State = 0;
+        KeyHandle.Pm_State.Led_P2_State = 0;
+        KeyHandle.Pm_State.Fan_State = 0;
+        KeyHandle.Pm_State.Door_State = 2;
+        Uart_Transmit_Hnadle(KeyHandle);
+        while(1)
+        {
+          Ds1302_Alldate = ds1302_readTime();
+          Now_Time_Display(Ds1302_Alldate,KeyHandle); 
+          if((Ds1302_Alldate.yd.day == KeyHandle.Pm_State.On_alldate.yd.day)&&(Ds1302_Alldate.hms.hour == KeyHandle.Pm_State.On_alldate.hms.hour)&&(Ds1302_Alldate.hms.min == KeyHandle.Pm_State.On_alldate.hms.min))
+          break;
+          else
+          {
+            KeyVaule=KeyBorad_Scan();
+            if(KeyVaule == S7_DOWN_VALUE) break;
+          }
+        }
+      }
+     }      
       peripheral = Peripheral_Realy;
-      
       Peripheral_Conversion();
       Ds1302_Alldate = ds1302_readTime();
       Hepa_Time_Conversion();
@@ -76,12 +100,10 @@ void main()
         KeyBorad_Hnadle(KeyVaule);
         Uart_Transmit_Hnadle(KeyHandle);
       }
-      Peripheral_Realy.Door_Up = 1;
-      Peripheral_Realy.Door_Do = 1;
-      if(Peripheral_Realy.Door_Up | Peripheral_Realy.Door_Do);
-      else Dis_Door_Bling = 1;
+      Peripheral_Realy.Door_Up = 0;
+      Peripheral_Realy.Door_Do = 0;
       Display_all(peripheral,KeyHandle,hepa,Ds1302_Alldate);
-      
+
       //ht1621_Char_write1(1,T_Addr[15],T_Mask[15],0,0);
 #endif
     }

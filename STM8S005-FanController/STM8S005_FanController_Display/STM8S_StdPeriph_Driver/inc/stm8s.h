@@ -277,10 +277,12 @@ struct PM_StatE
   u8 Door_State;
   u8 Fan_State;
   u8 Pm_Time;
+  struct ALLDATE On_alldate;
+  struct ALLDATE Off_alldate;
   u8 Pm_Num;
 };
 struct KEYHANDLE{
-    u8 Fan_Seepd_State;
+    u8 Fan_State;
     u8 Led_P1_State;
     u8 Led_P2_State;
     u8 Door_State;

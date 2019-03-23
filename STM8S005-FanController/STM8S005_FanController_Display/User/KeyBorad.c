@@ -4,6 +4,7 @@ extern u16 Peripheral_A11_Max;
 struct Hepa hepa;
 extern u8 Pm_Time;
 extern u8 Od_State;
+extern u16 Door_Move_time;
 void KeyBorad_PinInit(void)
 {
     GPIO_Init(KEYBORAD_PROT, KEYBORAD_H_4_PIN, GPIO_MODE_IN_PU_NO_IT);              
@@ -62,8 +63,8 @@ void KeyBorad_Hnadle(u8 KeyVaul)
    switch(KeyVaul)
    {
       case S1_DOWN_VALUE: 
-        KeyHandle.Fan_Seepd_State ++;
-        if(KeyHandle.Fan_Seepd_State  > 3) KeyHandle.Fan_Seepd_State  = 0;
+        KeyHandle.Fan_State ++;
+        if(KeyHandle.Fan_State  > 3) KeyHandle.Fan_State  = 0;
       break;
       case S2_DOWN_VALUE: 
         KeyHandle.Led_P1_State ++;
@@ -71,14 +72,21 @@ void KeyBorad_Hnadle(u8 KeyVaul)
           KeyHandle.Led_P1_State = 0;
       break;
       case S3_DOWN_VALUE: 
+        if(KeyHandle.Door_State != 2)
         KeyHandle.Led_P2_State ++;
         if(KeyHandle.Led_P2_State > 1)
           KeyHandle.Led_P2_State = 0;
       break;
       case S4_DOWN_VALUE: 
-        KeyHandle.Door_State ++;
+        if(KeyHandle.Led_P2_State != 1)
+        {
+          KeyHandle.Door_State ++;
+        }
+        Door_Move_time = 0;
         if(KeyHandle.Door_State > 2)
-        KeyHandle.Door_State = 0;
+        {
+          KeyHandle.Door_State = 1;
+        }
       break;
       case S5_DOWN_VALUE:
         if(KeyHandle.HEAP_State == 1)
@@ -127,6 +135,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
             }
             else if(KeyHandle.Od_State.Od_Num ==2) 
             {
+              if(KeyHandle.Od_State.Door_State != 2)
               KeyHandle.Od_State.Led_P2_State++;
               if(KeyHandle.Od_State.Led_P2_State > 1)
                 KeyHandle.Od_State.Led_P2_State = 0;
@@ -136,11 +145,11 @@ void KeyBorad_Hnadle(u8 KeyVaul)
               if(KeyHandle.Od_State.Led_P2_State == 0)
               {
                 KeyHandle.Od_State.Door_State++;
-                if(KeyHandle.Od_State.Door_State > 1)
-                  KeyHandle.Od_State.Door_State = 0;
+                if(KeyHandle.Od_State.Door_State > 2)
+                  KeyHandle.Od_State.Door_State = 1;
               }
               else
-                KeyHandle.Od_State.Door_State = 0;              
+                KeyHandle.Od_State.Door_State = 1;              
             }
           }
           if(KeyHandle.Oper_Mode_Dis_State == 2)
@@ -159,6 +168,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
             }
             else if(KeyHandle.Pm_State.Pm_Num ==2) 
             {
+              if(KeyHandle.Pm_State.Door_State != 2)
               KeyHandle.Pm_State.Led_P2_State++;
               if(KeyHandle.Pm_State.Led_P2_State > 1)
                 KeyHandle.Pm_State.Led_P2_State = 0;
@@ -168,18 +178,42 @@ void KeyBorad_Hnadle(u8 KeyVaul)
               if(KeyHandle.Pm_State.Led_P2_State == 0)
               {
                 KeyHandle.Pm_State.Door_State++;
-                if(KeyHandle.Pm_State.Door_State > 1)
-                  KeyHandle.Pm_State.Door_State = 0;
+                if(KeyHandle.Pm_State.Door_State > 2)
+                  KeyHandle.Pm_State.Door_State = 1;
               }
               else
                 KeyHandle.Pm_State.Door_State = 0;              
             }
             else if(KeyHandle.Pm_State.Pm_Num == 4)
             {
-              KeyHandle.Pm_State.Pm_Time ++;
-              if(KeyHandle.Pm_State.Pm_Time > 7)
-                KeyHandle.Pm_State.Pm_Time = 0;
+              KeyHandle.Pm_State.On_alldate.yd.day ++;
+              if(KeyHandle.Pm_State.On_alldate.yd.day > 30)KeyHandle.Pm_State.On_alldate.yd.day = 0;
             }
+            else if(KeyHandle.Pm_State.Pm_Num == 5)
+            {
+              KeyHandle.Pm_State.On_alldate.hms.hour ++;
+              if(KeyHandle.Pm_State.On_alldate.hms.hour > 23)KeyHandle.Pm_State.On_alldate.hms.hour = 0;
+            }  
+            else if(KeyHandle.Pm_State.Pm_Num == 6)
+            {
+              KeyHandle.Pm_State.On_alldate.hms.min ++;
+              if(KeyHandle.Pm_State.On_alldate.hms.min > 59)KeyHandle.Pm_State.On_alldate.hms.min = 0;
+            }
+            else if(KeyHandle.Pm_State.Pm_Num == 7)
+            {
+              KeyHandle.Pm_State.Off_alldate.yd.day ++;
+              if(KeyHandle.Pm_State.Off_alldate.yd.day > 30)KeyHandle.Pm_State.Off_alldate.yd.day = 0;
+            }
+            else if(KeyHandle.Pm_State.Pm_Num == 8)
+            {
+              KeyHandle.Pm_State.Off_alldate.hms.hour ++;
+              if(KeyHandle.Pm_State.Off_alldate.hms.hour > 23)KeyHandle.Pm_State.Off_alldate.hms.hour = 0;
+            }  
+            else if(KeyHandle.Pm_State.Pm_Num == 9)
+            {
+              KeyHandle.Pm_State.Off_alldate.hms.min ++;
+              if(KeyHandle.Pm_State.Off_alldate.hms.min > 59)KeyHandle.Pm_State.Off_alldate.hms.min = 0;
+            }  
           }
         }
         else
@@ -242,7 +276,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
           if(KeyHandle.Oper_Mode_Dis_State == 2)
           {
             KeyHandle.Pm_State.Pm_Num++;
-            if(KeyHandle.Pm_State.Pm_Num > 5)
+            if(KeyHandle.Pm_State.Pm_Num > 9)
               KeyHandle.Pm_State.Pm_Num = 0;            
           }
           else if(KeyHandle.Oper_Mode_Dis_State == 1)
