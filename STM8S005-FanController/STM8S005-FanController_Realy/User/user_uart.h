@@ -27,7 +27,7 @@
 #define DOOR_UP_IN 0X17
 #define DOOR_DO_IN_OFF 0X18
 #define DOOR_DO_IN 0X19
-void Uart_IT_Receive_Control(u8 data);
+void Uart_IT_Receive_Control(u8* data);
 void Uart_Send_data(struct Peripheral data);
 void uart2Init();
 void uart2SendByte(uint8_t data);
