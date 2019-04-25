@@ -291,9 +291,11 @@ struct KEYHANDLE{
     u8 HEAP_Dis_State;
     u8 Oper_Mode_State;
     u8 Oper_Mode_Dis_State;
+    u8 Time_State;
     u8 Wm_Num;
     struct Od_StatE Od_State;
     struct PM_StatE Pm_State;
+    struct ALLDATE AllDate;
 };
 struct Hepa 
 {

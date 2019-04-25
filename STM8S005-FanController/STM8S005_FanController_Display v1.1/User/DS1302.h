@@ -17,5 +17,6 @@
 
 void Ds1302_Init();
 struct ALLDATE ds1302_readTime( void );
+void ds1302_setTime(struct ALLDATE allDate);
 u8 ds1302_readByte(u8 Addr);
 #endif

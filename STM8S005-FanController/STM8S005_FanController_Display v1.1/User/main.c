@@ -54,7 +54,7 @@ void main()
     Tim4_Init();
     Tim1_Init();
     Gpio_Init();   
-    KeyHandle.Door_State = 1;
+    
     ht1621_init();
     enableInterrupts();
     KeyBorad_PinInit();
@@ -80,7 +80,7 @@ void main()
       {
         if(KeyHandle.Oper_Mode_State == 0)
         {
-          if((Ds1302_Alldate.yd.day == KeyHandle.Pm_State.Off_alldate.yd.day)&&(Ds1302_Alldate.hms.hour == KeyHandle.Pm_State.Off_alldate.hms.hour)&&(Ds1302_Alldate.hms.min == KeyHandle.Pm_State.Off_alldate.hms.min))
+          if((Ds1302_Alldate.md.date == KeyHandle.Pm_State.Off_alldate.md.date)&&(Ds1302_Alldate.hms.hour == KeyHandle.Pm_State.Off_alldate.hms.hour)&&(Ds1302_Alldate.hms.min == KeyHandle.Pm_State.Off_alldate.hms.min))
           {
             ht1621_Clear();
             KeyHandle.Pm_State.Led_P1_State = 0;
@@ -132,7 +132,9 @@ void main()
       
       //ht1621_Char_write1(1,T_Addr[15],T_Mask[15],0,0);
 #else
-      Uart_Transmit_Hnadle(KeyHandle);
+      Display_all(peripheral,KeyHandle,hepa,Ds1302_Alldate);
+      //ht1621_char_display();
+      //Uart_Transmit_Hnadle(KeyHandle);
       Delay_Ms(1000);
 #endif
     }

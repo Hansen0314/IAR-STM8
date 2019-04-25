@@ -24,7 +24,7 @@
 #define HT_SYS_EN			0x02
 #define HT_RCOSC			0x30
 #define HT_RCOSCEX          0x38
-
+#define HT_SYS_DIS_EN 0X00
 #define CS1_DIGITRON_START               1
 #define CS1_DIGITRON_END                 11
 #define CS2_12_15_DIGITRON_START         12

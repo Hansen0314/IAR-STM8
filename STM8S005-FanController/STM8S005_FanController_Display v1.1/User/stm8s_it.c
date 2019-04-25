@@ -29,10 +29,14 @@
 u16 Tim1_Count; 
 u8 Dis_Bling;
 u8 Dis_Door_Bling;
+u8 Dis_Door_Err_Bling;
+u8 Dis_Err_Bling;
 u8 Uart;
 u8 Uart_Char;
 u8 Uart_Char_Num;
+u8 Dis_Time;
 u8 Uart_Char_c[14] = {0};
+bool Dis;
 /** @addtogroup Template_Project
   * @{
   */
@@ -244,8 +248,23 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
   if(Tim1_Count > 500)
   {
     Tim1_Count = 0;
-    Dis_Bling = 1;
-    Dis_Door_Bling = 1;
+    Dis = !Dis;
+    if(Dis)
+    {
+      Dis_Bling = 1;
+      Dis_Door_Bling = 1;
+      Dis_Err_Bling = 1;
+      Dis_Door_Err_Bling = 1;
+      Dis_Time = 1;
+    }
+    else
+    {
+      Dis_Bling = 1;
+      Dis_Door_Bling = 1;
+      Dis_Err_Bling = 0;
+      Dis_Door_Err_Bling = 0;
+      Dis_Time = 0;      
+    }
   }    
 }
 

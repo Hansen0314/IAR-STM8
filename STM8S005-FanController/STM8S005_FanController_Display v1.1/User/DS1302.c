@@ -159,9 +159,9 @@ void Ds1302_Init()
 {
 	struct ALLDATE allDate;
 	allDate.yd.year = 18;
-	allDate.yd.day = 17;
+	allDate.yd.day = 5;
 	allDate.md.month = 10;
-	allDate.md.date = 6;
+	allDate.md.date = 20;
         allDate.hms.hour = 20;
         allDate.hms.min = 15;
         allDate.hms.sec = 30;

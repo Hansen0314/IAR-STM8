@@ -1,9 +1,12 @@
 #include "ht1621.h"
 extern u8 Dis_Bling;
+extern u8 Dis_Err_Bling;
+extern u8 Dis_Door_Err_Bling;
 u16 Peripheral_A11_Max = 300;
 u8 Pm_Time = 0;
 u16 hepa_time;
 extern u8 Dis_Door_Bling;
+extern u8 Dis_Time;
 u16 Door_Move_time;
 u8 alldate_Updata;
 //1 ~ 11
@@ -158,7 +161,7 @@ void ht1621_write(u8 cs ,u8 addr, u8 data)
         Set_Port_Val(CS_2_PIN, 1);  
   }      
 }
-void ht1621_Char_write1(u8 cs ,u8 addr, u8 data ,u8 status,u8 xin)
+void ht1621_Char_write1(u8 cs ,u8 addr, u8 data ,u8 status,u8 Char)
 {
  // u8 cs_1=cs;
   u8 t_data;
@@ -166,17 +169,17 @@ void ht1621_Char_write1(u8 cs ,u8 addr, u8 data ,u8 status,u8 xin)
   if(cs == 1)
   {
 	  t_data=cs1_ram_map[addr];
-	if(xin)
+	if(Char)
 	{
-      t2_data = cs1_Digitron_ram_map[addr];
-      cs1_Digitron_ram_map[addr] = data;
-      t_data &= ~ t2_data;
+          t2_data = cs1_Digitron_ram_map[addr];
+          cs1_Digitron_ram_map[addr] = data;
+          t_data &= ~ t2_data;
 	}	  
   }
   else if (cs == 2)
   {
     t_data=cs2_ram_map[addr];
-    if(xin)
+    if(Char)
     {
       t2_data = cs2_Digitron_ram_map[addr];
       cs2_Digitron_ram_map[addr] = data;
@@ -250,13 +253,13 @@ void ht1621_char_display()
 {
     ht1621_Char_write1(1,T_Addr[1],T_Mask[1],1,0);
     ht1621_Char_write1(1,T_Addr[3],T_Mask[3],1,0);
-    ht1621_Char_write1(1,T_Addr[4],T_Mask[4],1,0); 
+    ht1621_Char_write1(1,T_Addr[4],T_Mask[4],0,0); 
     ht1621_Char_write1(1,T_Addr[19],T_Mask[19],1,0);
     ht1621_Char_write1(1,T_Addr[20],T_Mask[20],1,0);
     ht1621_Char_write1(2,T_Addr[21],T_Mask[21],1,0);
     ht1621_Char_write1(2,T_Addr[31],T_Mask[31],1,0);  
-    ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
-    ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);  
+//    ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
+//    ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);  
 } 
 void ht1621_init()
 {
@@ -265,14 +268,13 @@ void ht1621_init()
         GPIO_Init(LCD_PROT,RD_PIN,GPIO_MODE_OUT_PP_LOW_SLOW);
         GPIO_Init(LCD_PROT,WR_PIN,GPIO_MODE_OUT_PP_LOW_SLOW);
         GPIO_Init(LCD_PROT,DATA_PIN,GPIO_MODE_OUT_PP_LOW_SLOW);
-        GPIO_Init(LCD_PROT,CS_2_PIN,GPIO_MODE_OUT_PP_LOW_SLOW);        
-        
+        GPIO_Init(LCD_PROT,CS_2_PIN,GPIO_MODE_OUT_PP_LOW_SLOW);
+        ht1621_send_cmd(HT_SYS_DIS_EN);
         ht1621_send_cmd(HT_SYS_EN);
 	ht1621_send_cmd(HT_RCOSC);
 	ht1621_send_cmd(HT_BISA_COM);
-	ht1621_send_cmd(HT_LCD_ON);
+	ht1621_send_cmd(HT_LCD_ON);      
         ht1621_Clear();
-          
 #if 0        
          
         for(i=CS1_DIGITRON_START;i<CS1_DIGITRON_END+1;i++)
@@ -337,7 +339,7 @@ void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_Sta
 		ht1621_Char_write1(1,Dis_Digitron_Addr[1],Cs1_Dis_Digitron_Num[8],0,1);
 		ht1621_Char_write1(1,Dis_Digitron_Addr[2],Cs1_Dis_Digitron_Num[8],0,1);
 		ht1621_Char_write1(1,Dis_Digitron_Addr[3],Cs1_Dis_Digitron_Num[8],0,1); 
-		Dis_Bling = 0;
+		//Dis_Bling = 0;
      }
      else
      {
@@ -389,12 +391,12 @@ void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle,struct Periphe
               ht1621_Char_write1(1,Dis_Digitron_Addr[9],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd/100],1,1);
           ht1621_Char_write1(1,Dis_Digitron_Addr[10],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd%100/10],1,1);
               ht1621_Char_write1(1,Dis_Digitron_Addr[11],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd%10],1,1);  
-          Dis_Bling =0;
+          //Dis_Bling =0;
         }
           ht1621_Char_write1(2,Dis_Digitron_Addr[12],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time/1000],1,1);
-      ht1621_Char_write1(2,Dis_Digitron_Addr[13],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%1000/100],1,1);
-        ht1621_Char_write1(2,Dis_Digitron_Addr[14],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%100/10],1,1); 
-            ht1621_Char_write1(2,Dis_Digitron_Addr[15],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%10],1,1);          
+          ht1621_Char_write1(2,Dis_Digitron_Addr[13],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%1000/100],1,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[14],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%100/10],1,1); 
+          ht1621_Char_write1(2,Dis_Digitron_Addr[15],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%10],1,1);          
      }
      else
      {
@@ -414,16 +416,24 @@ void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle,struct Periphe
           ht1621_Char_write1(2,Dis_Digitron_Addr[13],Cs2_12_15_Dis_Digitron_Num[8],0,1);
           ht1621_Char_write1(2,Dis_Digitron_Addr[14],Cs2_12_15_Dis_Digitron_Num[8],0,1); 
           ht1621_Char_write1(2,Dis_Digitron_Addr[15],Cs2_12_15_Dis_Digitron_Num[8],0,1); 
-          Dis_Bling =0;
+         // Dis_Bling =0;
         }
      }
      
    }
   if((hepa.Fan_Seepd > peripheral.a11)||(hepa.Work_Time < hepa_time)) 
   {
-    
-    ht1621_Char_write1(1,T_Addr[15],T_Mask[15],1,0);
-    ht1621_Char_write1(1,T_Addr[2],T_Mask[2],1,0);
+    if(Dis_Err_Bling)
+    {
+      ht1621_Char_write1(1,T_Addr[15],T_Mask[15],1,0);
+      ht1621_Char_write1(1,T_Addr[2],T_Mask[2],1,0);
+      //Dis_Err_Bling = 0;
+    }
+    else
+    {
+      ht1621_Char_write1(1,T_Addr[15],T_Mask[15],0,0);
+      ht1621_Char_write1(1,T_Addr[2],T_Mask[2],0,0);      
+    }
   }
   else 
   {
@@ -442,7 +452,7 @@ void Oper_Mode_Disply(u8 Oper_Mode_State,u8 Oper_Mode_Dis_State)
         ht1621_Char_write1(1,T_Addr[10],T_Mask[10],0,0);
         ht1621_Char_write1(1,T_Addr[11],T_Mask[11],1,0);
         ht1621_Char_write1(1,T_Addr[12],T_Mask[12],0,0);
-        Dis_Bling = 0;
+        //Dis_Bling = 0;
       }
       else
       {
@@ -459,7 +469,7 @@ void Oper_Mode_Disply(u8 Oper_Mode_State,u8 Oper_Mode_Dis_State)
         ht1621_Char_write1(1,T_Addr[10],T_Mask[10],0,0);
         ht1621_Char_write1(1,T_Addr[11],T_Mask[11],0,0);
         ht1621_Char_write1(1,T_Addr[12],T_Mask[12],1,0);
-        Dis_Bling = 0;
+       // Dis_Bling = 0;
       }
       else
       {
@@ -475,7 +485,7 @@ void Oper_Mode_Disply(u8 Oper_Mode_State,u8 Oper_Mode_Dis_State)
         ht1621_Char_write1(1,T_Addr[10],T_Mask[10],1,0);
         ht1621_Char_write1(1,T_Addr[11],T_Mask[11],0,0);
         ht1621_Char_write1(1,T_Addr[12],T_Mask[12],0,0); 
-        Dis_Bling = 0;
+        //Dis_Bling = 0;
       }
       else
       {
@@ -579,7 +589,16 @@ void Week_Display(u8 date)
         ht1621_Char_write1(2,T_Addr[26],T_Mask[26],0,0);
         ht1621_Char_write1(2,T_Addr[27],T_Mask[27],0,0);
         ht1621_Char_write1(2,T_Addr[28],T_Mask[28],1,0);
-      break;    
+      break;  
+      case 8:
+        ht1621_Char_write1(2,T_Addr[22],T_Mask[22],0,0);
+        ht1621_Char_write1(2,T_Addr[23],T_Mask[23],0,0);
+        ht1621_Char_write1(2,T_Addr[24],T_Mask[24],0,0);
+        ht1621_Char_write1(2,T_Addr[25],T_Mask[25],0,0);
+        ht1621_Char_write1(2,T_Addr[26],T_Mask[26],0,0);
+        ht1621_Char_write1(2,T_Addr[27],T_Mask[27],0,0);
+        ht1621_Char_write1(2,T_Addr[28],T_Mask[28],0,0);
+      break;
       default:
       break;
     }  
@@ -606,8 +625,8 @@ void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandl)
             ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[KeyHandl.Pm_State.Off_alldate.hms.min/10],1,1); 
             ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[KeyHandl.Pm_State.Off_alldate.hms.min%10],1,1); 
                  
-            ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.Off_alldate.yd.day/10],1,1);
-            ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.Off_alldate.yd.day%10],1,1);
+            ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.Off_alldate.md.date/10],1,1);
+            ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.Off_alldate.md.date%10],1,1);
             
             ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
             ht1621_Char_write1(2,T_Addr[30],T_Mask[30],1,0);  
@@ -620,8 +639,8 @@ void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandl)
             ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[KeyHandl.Pm_State.On_alldate.hms.min/10],1,1); 
             ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[KeyHandl.Pm_State.On_alldate.hms.min%10],1,1); 
                  
-            ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.On_alldate.yd.day/10],1,1);
-            ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.On_alldate.yd.day%10],1,1);
+            ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.On_alldate.md.date/10],1,1);
+            ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[KeyHandl.Pm_State.On_alldate.md.date%10],1,1);
             ht1621_Char_write1(2,T_Addr[29],T_Mask[29],1,0);
             ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0); 
           }  
@@ -643,13 +662,13 @@ void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandl)
             ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],1,0);
           } 
           
-          ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day/10],1,1);
-          ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day%10],1,1); 
+          ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.md.date/10],1,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.md.date%10],1,1); 
           ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
           ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0);
           ht1621_Char_write1(2,Dis_Digitron_Addr[20],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year/10],1,1);
           ht1621_Char_write1(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year%10],1,1);
-          ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month/10],1,1); 
+          ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month%10],1,1); 
 
           if(alldate.md.month > 9) 
           {  
@@ -661,47 +680,310 @@ void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandl)
             ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
             ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);      
           }       
-          Week_Display(alldate.md.date);   
+          Week_Display(alldate.yd.day);   
       }
-    }
-    else if(KeyHandle.Oper_Mode_Dis_State == 0)
-    {
-      alldate_Updata = 1;
+      ht1621_Char_write1(2,Dis_Digitron_Addr[20],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year/10],1,1);
+      ht1621_Char_write1(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year%10],1,1);
       
-      ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1,1);
-      ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],1,1);
-
-      ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],1,1); 
-      ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],1,1); 
+      ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month%10],1,1); 
       
-      if(alldate.hms.sec%2)
-      {
-        ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],0,0);
+      if(alldate.md.month > 9) 
+      {  
+        ht1621_Char_write1(2,T_Addr[32],T_Mask[32],0,0);
+        ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);
       }
       else
       {
-        ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],1,0);
-      }    
-      ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day/10],1,1);
-      ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.yd.day%10],1,1); 
-      ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
-      ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0);
+        ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
+        ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);      
+      }       
+      Week_Display(alldate.yd.day);
     }
-    ht1621_Char_write1(2,Dis_Digitron_Addr[20],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year/10],1,1);
-    ht1621_Char_write1(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year%10],1,1);
-    ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month/10],1,1); 
-    
-    if(alldate.md.month > 9) 
-    {  
-      ht1621_Char_write1(2,T_Addr[32],T_Mask[32],0,0);
-      ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);
-    }
-    else
+    else if(KeyHandle.Oper_Mode_Dis_State == 0)
     {
-      ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
-      ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);      
-    }       
-    Week_Display(alldate.md.date);
+        alldate_Updata = 1;
+        if(KeyHandle.Time_State == 1)
+        {
+        ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],1,1);
+
+        ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],1,1); 
+        ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],1,1); 
+        
+        if(alldate.hms.sec%2)
+        {
+          ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],0,0);
+        }
+        else
+        {
+          ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],1,0);
+        }    
+        ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.md.date/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.md.date%10],1,1); 
+        ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
+        ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0);
+        
+        ht1621_Char_write1(2,Dis_Digitron_Addr[20],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year%10],1,1);        
+        if(Dis_Time)
+        {
+          ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month%10],1,1); 
+          
+          if(alldate.md.month > 9) 
+          {  
+            ht1621_Char_write1(2,T_Addr[32],T_Mask[32],0,0);
+            ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);
+          }
+          else
+          {
+            ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
+            ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);      
+          }  
+          //Dis_Time = 0;
+        }
+        else
+        {
+          ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month%10],0,1); 
+          ht1621_Char_write1(2,T_Addr[32],T_Mask[32],0,0);
+          ht1621_Char_write1(2,T_Addr[33],T_Mask[33],0,0);                             
+        }
+        
+      }
+      else if(KeyHandle.Time_State == 2)
+      {
+        if(Dis_Time)
+        {
+          ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.md.date/10],1,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.md.date%10],1,1); 
+          //Dis_Time = 0;
+        }
+        else
+        {
+          ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.md.date/10],0,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.md.date%10],0,1);                        
+        } 
+        ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],1,1);
+
+        ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],1,1); 
+        ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],1,1); 
+        
+        if(alldate.hms.sec%2)
+        {
+          ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],0,0);
+        }
+        else
+        {
+          ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],1,0);
+        }    
+//        ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.md.date/10],1,1);
+//        ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.md.date%10],1,1); 
+        ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
+        ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0);
+        
+        ht1621_Char_write1(2,Dis_Digitron_Addr[20],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year%10],1,1);
+        
+        ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month%10],1,1); 
+        
+        if(alldate.md.month > 9) 
+        {  
+          ht1621_Char_write1(2,T_Addr[32],T_Mask[32],0,0);
+          ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);
+        }
+        else
+        {
+          ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
+          ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);      
+        }       
+        Week_Display(alldate.yd.day);           
+        
+      }
+      else if(KeyHandle.Time_State == 3)
+      {
+        if(Dis_Time)
+        {
+          ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],1,1);
+          //Dis_Time = 0;
+        }
+        else
+        {
+          ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],0,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],0,1);                      
+        }  
+//        ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1,1);
+//        ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],1,1);
+
+        ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],1,1); 
+        ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],1,1); 
+        
+        if(alldate.hms.sec%2)
+        {
+          ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],0,0);
+        }
+        else
+        {
+          ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],1,0);
+        }    
+        ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.md.date/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.md.date%10],1,1); 
+        ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
+        ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0);
+        
+        ht1621_Char_write1(2,Dis_Digitron_Addr[20],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year%10],1,1);
+        
+        ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month%10],1,1); 
+        
+        if(alldate.md.month > 9) 
+        {  
+          ht1621_Char_write1(2,T_Addr[32],T_Mask[32],0,0);
+          ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);
+        }
+        else
+        {
+          ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
+          ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);      
+        }       
+        Week_Display(alldate.yd.day);              
+      }
+      else if(KeyHandle.Time_State == 4)
+      {
+        if(Dis_Time)
+        {
+          ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],1,1); 
+          ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],1,1); 
+          //Dis_Time = 0;
+        }
+        else
+        {
+          ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],0,1); 
+          ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],0,1);                      
+        }        
+        ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],1,1);
+
+//        ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],1,1); 
+//        ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],1,1); 
+        
+        if(alldate.hms.sec%2)
+        {
+          ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],0,0);
+        }
+        else
+        {
+          ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],1,0);
+        }    
+        ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.md.date/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.md.date%10],1,1); 
+        ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
+        ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0);
+        
+        ht1621_Char_write1(2,Dis_Digitron_Addr[20],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year%10],1,1);
+        
+        ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month%10],1,1); 
+        
+        if(alldate.md.month > 9) 
+        {  
+          ht1621_Char_write1(2,T_Addr[32],T_Mask[32],0,0);
+          ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);
+        }
+        else
+        {
+          ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
+          ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);      
+        }       
+        Week_Display(alldate.yd.day);          
+      }
+      else if(KeyHandle.Time_State == 5)
+      {
+        if(Dis_Time)
+        {
+          Week_Display(8); 
+          //Dis_Time = 0;
+        }
+        else
+        {
+          Week_Display(alldate.yd.day);                    
+        }           
+          ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],1,1);
+
+          ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],1,1); 
+          ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],1,1); 
+
+          if(alldate.hms.sec%2)
+          {
+            ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],0,0);
+          }
+          else
+          {
+            ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],1,0);
+          }    
+          ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.md.date/10],1,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.md.date%10],1,1); 
+          ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
+          ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0);
+
+          ht1621_Char_write1(2,Dis_Digitron_Addr[20],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year/10],1,1);
+          ht1621_Char_write1(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year%10],1,1);
+
+          ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month%10],1,1); 
+
+          if(alldate.md.month > 9) 
+          {  
+            ht1621_Char_write1(2,T_Addr[32],T_Mask[32],0,0);
+            ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);
+          }
+          else
+          {
+            ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
+            ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);      
+          }                
+      }
+      else
+      {
+        ht1621_Char_write1(2,Dis_Digitron_Addr[16],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[17],Cs2_16_19_Dis_Digitron_Num[alldate.hms.hour%10],1,1);
+
+        ht1621_Char_write1(2,Dis_Digitron_Addr[18],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min/10],1,1); 
+        ht1621_Char_write1(2,Dis_Digitron_Addr[19],Cs2_16_19_Dis_Digitron_Num[alldate.hms.min%10],1,1); 
+        
+        if(alldate.hms.sec%2)
+        {
+          ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],0,0);
+        }
+        else
+        {
+          ht1621_Char_write1(2,Col_Addr[1],Col_Mask[1],1,0);
+        }    
+        ht1621_Char_write1(2,Dis_Digitron_Addr[23],Cs2_20_24_Dis_Digitron_Num[alldate.md.date/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[24],Cs2_20_24_Dis_Digitron_Num[alldate.md.date%10],1,1); 
+        ht1621_Char_write1(2,T_Addr[29],T_Mask[29],0,0);
+        ht1621_Char_write1(2,T_Addr[30],T_Mask[30],0,0);
+        
+        ht1621_Char_write1(2,Dis_Digitron_Addr[20],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year/10],1,1);
+        ht1621_Char_write1(2,Dis_Digitron_Addr[21],Cs2_20_24_Dis_Digitron_Num[alldate.yd.year%10],1,1);
+        
+        ht1621_Char_write1(2,Dis_Digitron_Addr[22],Cs2_20_24_Dis_Digitron_Num[alldate.md.month%10],1,1); 
+        
+        if(alldate.md.month > 9) 
+        {  
+          ht1621_Char_write1(2,T_Addr[32],T_Mask[32],0,0);
+          ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);
+        }
+        else
+        {
+          ht1621_Char_write1(2,T_Addr[32],T_Mask[32],1,0);
+          ht1621_Char_write1(2,T_Addr[33],T_Mask[33],1,0);      
+        }       
+        Week_Display(alldate.yd.day);  
+      }
+    }
+    
+
 }
 /*
 void Fan_Speed_State_Display(struct KEYHANDLE KeyHandle)
@@ -774,8 +1056,17 @@ void Door_State_Display(u8 Door_State,struct Peripheral peripheral)
           else
           {
             Dis_Door_Bling = 0;
+            
             Door_Move_time = 21;
-            ht1621_Char_write1(1,T_Addr[18],T_Mask[18],1,0); 
+            if(Dis_Door_Err_Bling)
+            {
+              ht1621_Char_write1(1,T_Addr[18],T_Mask[18],1,0); 
+              Dis_Door_Err_Bling = 0;
+            }
+            else
+            {
+              ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
+            }
           } 
         }
         else
@@ -807,7 +1098,15 @@ void Door_State_Display(u8 Door_State,struct Peripheral peripheral)
           {
             Dis_Door_Bling = 0;
             Door_Move_time = 21;
-            ht1621_Char_write1(1,T_Addr[18],T_Mask[18],1,0);
+            if(Dis_Door_Err_Bling)
+            {
+              ht1621_Char_write1(1,T_Addr[18],T_Mask[18],1,0); 
+              Dis_Door_Err_Bling = 0;
+            }
+            else
+            {
+              ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
+            }
           } 
         }
         else
