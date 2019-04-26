@@ -239,9 +239,12 @@ struct Peripheral
 {
   u8  Fr;
   u8  Dp;
+  u8  Er;
   u16 a11;
   u16 a12;
   u16 a13;
+  u8 Door_Do;
+  u8 Door_Up;
 };
 /**
   * @}

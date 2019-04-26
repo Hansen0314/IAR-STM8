@@ -25,10 +25,12 @@
 #include "stm8s_it.h"
 #include "stm8s_conf.h"
 #include "delay.h"
+#include "user_uart.h"
 /** @addtogroup Template_Project
   * @{
   */
-
+u8 Send_peripheral;
+u16 Tim1_Count;
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -39,7 +41,9 @@
 #define RxBufferSize 64
 uint8_t RxBuffer[RxBufferSize];
 uint8_t UART_RX_NUM=0;
-
+uint8_t Res_Last;
+u8 Uart_Char_Num = 0;
+u8 Uart_Char_c[6] = {0};
 #ifdef _COSMIC_
 /**
   * @brief Dummy Interrupt routine
@@ -231,6 +235,13 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+  TIM1_ClearFlag(TIM1_FLAG_UPDATE);
+  Tim1_Count++;
+  if(Tim1_Count > 500)
+  {
+    Tim1_Count = 0;
+    Send_peripheral = 1;
+  }
 }
 
 /**
@@ -386,30 +397,22 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
     /* In order to detect unexpected events during development,
        it is recommended to set a breakpoint on the following instruction.
     */
-	uint8_t Res;
+    uint8_t Res;
     if(UART2->SR & UART2_FLAG_RXNE)  
-    {/*接收中断(接收到的数据必须是0x0d 0x0a结尾)*/
-	Res =(uint8_t)UART2->DR;
+    {/*接收中断(接收到的数据必须是0x0d 0x0a结尾)*/      
+	//Res =(uint8_t)UART2->DR;
+        Res = uart2ReceiveByte(); 
+        if(Res == 0xfd)
+        {
+          Uart_Char_Num = 0;
+          //Uart_IT_Receive_Hnadle(Uart_Char_c);
+        }
+        Uart_Char_c[Uart_Char_Num] = Res; 
+        Uart_Char_Num++;
         /*(USART1->DR);读取接收到的数据,当读完数据后自动取消RXNE的中断标志位*/
-	if(( UART_RX_NUM&0x80)==0)/*接收未完成*/
-	{
-	    if( UART_RX_NUM&0x40)/*接收到了0x0d*/
-		{
-		  if(Res!=0x0a) UART_RX_NUM=0;/*接收错误,重新开始*/
-		  else  UART_RX_NUM|=0x80;	/*接收完成了 */
-		}
-            else /*还没收到0X0D*/
-              {	
-                if(Res==0x0d) UART_RX_NUM|=0x40;
-                else
-                  {
-                    RxBuffer[ UART_RX_NUM&0X3F]=Res ;
-                     UART_RX_NUM++;
-                      if( UART_RX_NUM>63) UART_RX_NUM=0;/*接收数据错误,重新开始接收*/  
-                  }		 
-	      }
-	 }  		 
-      }
+        Uart_IT_Receive_Control(Uart_Char_c);
+     }
+    //Res_Last = Res;
  }
 #endif /* STM8S105 or STM8AF626x */
 

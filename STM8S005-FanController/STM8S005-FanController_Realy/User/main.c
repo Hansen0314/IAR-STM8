@@ -11,29 +11,53 @@ uint8_t ii;
 #define RxBufferSize 64
 extern u8 RxBuffer[RxBufferSize];
 extern u8 UART_RX_NUM;
-
+extern u8 Send_peripheral;
 struct Peripheral peripheral;
 void main()
 {   
+    u8 i;
     CLK_HSICmd(ENABLE);
     CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);
     Gpio_Init();
     uart2Init();
     Adc_Init();
     Tim4_Init();
+    Tim1_Init();
     enableInterrupts();
     while(1)
     {
-        peripheral.Dp = GPIO_ReadInputPin(DP_PORT,DP_PIN);
-        peripheral.Fr = GPIO_ReadInputPin(FR_PORT,FR_PIN);
-        peripheral.a11 = Adc_Concersion(A11_CHANNEL);
-        peripheral.a12 = Adc_Concersion(A12_CHANNEL);
-        peripheral.a13 = Adc_Concersion(A13_CHANNEL);
+    
+#if 0
+    GPIO_WriteLow(ER_PORT,ER_PIN);
+    Delay_Ms(1000);
+    GPIO_WriteHigh(ER_PORT,ER_PIN);
+    Delay_Ms(1000); 
+#else
+      peripheral.Dp = GPIO_ReadInputPin(DP_PORT,DP_PIN);
+      peripheral.Fr = GPIO_ReadInputPin(FR_PORT,FR_PIN); 
+      peripheral.a11 = Adc_Concersion(A11_CHANNEL);
+      peripheral.a12 = Adc_Concersion(A12_CHANNEL);
+      peripheral.a13 = Adc_Concersion(A13_CHANNEL);
+      peripheral.Door_Up = GPIO_ReadInputPin(DOOR_UP_IN_PORT,DOOR_UP_IN_PIN);
+      peripheral.Door_Do = GPIO_ReadInputPin(DOOR_DO_IN_PORT,DOOR_DO_IN_PIN); 
+
+      if(Send_peripheral == 1)
+      {
         Uart_Send_data(peripheral);
-        Delay_Ms(1000);
-        printf("a11 is %d \n",(int)peripheral.a11);
-        printf("a12 is %d \n",(int)peripheral.a12);
-        printf("a13 is %d \n",(int)peripheral.a13);
+        //uart2SendByte(0x01);
+        Send_peripheral = 0;
+//        printf("%d \n",peripheral.Door_Do);
+//        printf("%d \n",peripheral.Door_Up);
+      }
+      if(peripheral.Dp & peripheral.Fr)
+      {
+        GPIO_WriteLow(ER_PORT,ER_PIN);
+      }
+      else
+      {
+        GPIO_WriteHigh(ER_PORT,ER_PIN);
+      }    
+#endif
     }
 }
 

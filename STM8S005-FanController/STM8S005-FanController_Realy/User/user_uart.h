@@ -12,11 +12,10 @@
 #define LED_P2_ON   0X07
 #define LED_P2_OFF  0X08
 #define DOOR_UP_ON  0X09
-#define DOOR_UP_OFF 0X0A
 #define DOOR_DO_ON  0X0B
-#define DOOR_DO_OFF 0X0C
-#define ER_UP       0X0D
-#define ER_DOWN     0X0E
+#define DOOR_OFF   0x0c
+#define ER_ON       0X0D
+#define ER_OFF     0X0E
 #define DP_HIGH     0X0F
 #define DP_LOW     0X10
 #define FR_HIGH    0X11
@@ -24,7 +23,11 @@
 #define A11_VALUE   0X13
 #define A12_VALUE   0X14
 #define A13_VALUE   0X15
-void Uart_IT_Receive_Control(u8 data);
+#define DOOR_UP_IN_OFF 0X16
+#define DOOR_UP_IN 0X17
+#define DOOR_DO_IN_OFF 0X18
+#define DOOR_DO_IN 0X19
+void Uart_IT_Receive_Control(u8* data);
 void Uart_Send_data(struct Peripheral data);
 void uart2Init();
 void uart2SendByte(uint8_t data);

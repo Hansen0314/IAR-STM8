@@ -28,6 +28,11 @@
 #include "user_uart.h"
 u16 Tim1_Count; 
 u8 Dis_Bling;
+u8 Dis_Door_Bling;
+u8 Uart;
+u8 Uart_Char;
+u8 Uart_Char_Num;
+u8 Uart_Char_c[14] = {0};
 /** @addtogroup Template_Project
   * @{
   */
@@ -240,6 +245,7 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
   {
     Tim1_Count = 0;
     Dis_Bling = 1;
+    Dis_Door_Bling = 1;
   }    
 }
 
@@ -396,13 +402,20 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
     /* In order to detect unexpected events during development,
        it is recommended to set a breakpoint on the following instruction.
     */
-	uint8_t Res;
     if(UART2->SR & UART2_FLAG_RXNE)  
     {
-	Res =(uint8_t)UART2->DR;
+        if(uart2ReceiveByte() == 0xfd)
+        {
+          Uart_Char_Num = 0;
+          Uart_IT_Receive_Hnadle(Uart_Char_c);
+        }
+        Uart_Char_c[Uart_Char_Num] = uart2ReceiveByte(); 
+        Uart_Char_Num++;
+        
         /*(USART1->DR);读取接收到的数据,当读完数据后自动取消RXNE的中断标志位*/
-        Uart_IT_Receive_Hnadle(Res);
-	   		 
+        //printf("%o \n",Res);
+        //uart2SendByte(Res);
+        	 
     }
  }
 #endif /* STM8S105 or STM8AF626x */

@@ -48,7 +48,7 @@
         <Freq>16000000</Freq>
     </Simulator>
     <DebugChecksum>
-        <Checksum>3879525687</Checksum>
+        <Checksum>222122987</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -76,7 +76,8 @@
         <LogFile>_ ""</LogFile>
     </TermIOLog>
     <Breakpoints>
-        <Count>0</Count>
+        <Bp0>_ "STD_CODE" "{$PROJ_DIR$\User\main.c}.80.3" 0 0 0 0 "" 0 ""</Bp0>
+        <Count>1</Count>
     </Breakpoints>
     <Aliases>
         <Count>0</Count>
