@@ -27,14 +27,14 @@ u8 KeyVaule;
 extern u8 Uart_Char_Num;
 void Hepa_Time_Conversion()
 {
-    day = Ds1302_Alldate.yd.day - Ds1302_Alldate_Init.yd.day; 
+    day = Ds1302_Alldate.md.date - Ds1302_Alldate_Init.md.date; 
     hour = Ds1302_Alldate.hms.hour - Ds1302_Alldate_Init.hms.hour;
     hepa_time = day*24 + hour;
 }
 struct Peripheral Peripheral_Conversion()
 {
   
-  peripheral.a11 = (float)Peripheral_Realy.a11/1024*50*100;
+  peripheral.a11 = (float)Peripheral_Realy.a11/1024*Peripheral_A11_Max*100;
   peripheral.a12 = (float)Peripheral_Realy.a12/1024*100*70;
   peripheral.a13 = (float)Peripheral_Realy.a13/1024*100;
   peripheral.Door_Do = Peripheral_Realy.Door_Do;
@@ -70,6 +70,7 @@ void main()
     KeyHandle.Fan_State = 0;
     KeyHandle.Door_State = 2;
     alldate_Updata = 1;
+    Peripheral_A11_Max = 50;
 #endif  
     //Öµ°àÄ£Ê½ Ñ¡ÔñÍêÁËÔÙ¸Ä
     while(1)
