@@ -6,10 +6,10 @@ extern u8 Pm_Time;
 extern u8 Od_State;
 extern u16 Door_Move_time;
 /*******************************************************************************
-****入口参数：无
-****出口参数：无
-****函数备注：不精确延时函数
-****版权信息：蓝旗嵌入式系统
+****鍏ュ彛鍙傛暟锛氭棤
+****鍑哄彛鍙傛暟锛氭棤
+****鍑芥暟澶囨敞锛氫笉绮剧‘寤舵椂鍑芥暟
+****鐗堟潈淇℃伅锛氳摑鏃楀祵鍏ュ紡绯荤粺
 *******************************************************************************/
 void Delay(__IO uint16_t nCount)
 {
@@ -205,7 +205,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
           if(KeyHandle.Fan_Seepd_Max_State == 1)
           {
             Peripheral_A11_Max ++;
-            if (Peripheral_A11_Max > 1000) 
+            if (Peripheral_A11_Max > 100) 
               Peripheral_A11_Max = 0;
           }
           else if(KeyHandle.HEAP_State == 1)
