@@ -330,6 +330,7 @@ void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_Sta
    {
 		ht1621_Char_write1(1,Dis_Digitron_Addr[1],Cs1_Dis_Digitron_Num[peripheral.a11/100],1,1);
 		ht1621_Char_write1(1,Dis_Digitron_Addr[2],Cs1_Dis_Digitron_Num[peripheral.a11%100/10],1,1);
+	   	ht1621_Char_write1(1,P_Addr[2],P_Mask[2],1,0);
 		ht1621_Char_write1(1,Dis_Digitron_Addr[3],Cs1_Dis_Digitron_Num[peripheral.a11%10],1,1);
    }
    else
@@ -338,6 +339,7 @@ void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_Sta
      {
 		ht1621_Char_write1(1,Dis_Digitron_Addr[1],Cs1_Dis_Digitron_Num[8],0,1);
 		ht1621_Char_write1(1,Dis_Digitron_Addr[2],Cs1_Dis_Digitron_Num[8],0,1);
+	     	ht1621_Char_write1(1,P_Addr[2],P_Mask[2],0,0);
 		ht1621_Char_write1(1,Dis_Digitron_Addr[3],Cs1_Dis_Digitron_Num[8],0,1); 
 		//Dis_Bling = 0;
      }
@@ -345,11 +347,13 @@ void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_Sta
      {
 		ht1621_Char_write1(1,Dis_Digitron_Addr[1],Cs1_Dis_Digitron_Num[Peripheral_A11_Max/100],1,1);
 		ht1621_Char_write1(1,Dis_Digitron_Addr[2],Cs1_Dis_Digitron_Num[Peripheral_A11_Max%100/10],1,1);
+	     	ht1621_Char_write1(1,P_Addr[2],P_Mask[2],1,0);
 		ht1621_Char_write1(1,Dis_Digitron_Addr[3],Cs1_Dis_Digitron_Num[Peripheral_A11_Max%10],1,1); 
      }
    }
 	ht1621_Char_write1(1,Dis_Digitron_Addr[4],Cs1_Dis_Digitron_Num[peripheral.a12/100],1,1);
 	ht1621_Char_write1(1,Dis_Digitron_Addr[5],Cs1_Dis_Digitron_Num[peripheral.a12%100/10],1,1);
+	ht1621_Char_write1(1,P_Addr[4],P_Mask[4],1,0);
 	ht1621_Char_write1(1,Dis_Digitron_Addr[6],Cs1_Dis_Digitron_Num[peripheral.a12%10],1,1);
    
 	ht1621_Char_write1(1,Dis_Digitron_Addr[7],Cs1_Dis_Digitron_Num[peripheral.a13/10],1,1);
@@ -384,13 +388,15 @@ void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle,struct Periphe
         {
 			ht1621_Char_write1(1,Dis_Digitron_Addr[9],Cs1_Dis_Digitron_Num[8],0,1);
 			ht1621_Char_write1(1,Dis_Digitron_Addr[10],Cs1_Dis_Digitron_Num[8],0,1);
-			ht1621_Char_write1(1,Dis_Digitron_Addr[11],Cs1_Dis_Digitron_Num[8],0,1);           
+			ht1621_Char_write1(1,Dis_Digitron_Addr[11],Cs1_Dis_Digitron_Num[8],0,1);
+			ht1621_Char_write1(1,P_Addr[7],P_Mask[7],0,0);
         }
         else
         {
-              ht1621_Char_write1(1,Dis_Digitron_Addr[9],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd/100],1,1);
-          ht1621_Char_write1(1,Dis_Digitron_Addr[10],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd%100/10],1,1);
-              ht1621_Char_write1(1,Dis_Digitron_Addr[11],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd%10],1,1);  
+		ht1621_Char_write1(1,Dis_Digitron_Addr[9],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd/100],1,1);
+		ht1621_Char_write1(1,Dis_Digitron_Addr[10],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd%100/10],1,1);
+		ht1621_Char_write1(1,P_Addr[7],P_Mask[7],1,0);
+		ht1621_Char_write1(1,Dis_Digitron_Addr[11],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd%10],1,1);  
           //Dis_Bling =0;
         }
           ht1621_Char_write1(2,Dis_Digitron_Addr[12],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time/1000],1,1);
@@ -402,6 +408,7 @@ void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle,struct Periphe
      {
         ht1621_Char_write1(1,Dis_Digitron_Addr[9],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd/100],1,1);
         ht1621_Char_write1(1,Dis_Digitron_Addr[10],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd%100/10],1,1);
+	ht1621_Char_write1(1,P_Addr[7],P_Mask[7],1,0);
         ht1621_Char_write1(1,Dis_Digitron_Addr[11],Cs1_Dis_Digitron_Num[hepa.Fan_Seepd%10],1,1);  
         if(Dis_Bling == 0)
         {
