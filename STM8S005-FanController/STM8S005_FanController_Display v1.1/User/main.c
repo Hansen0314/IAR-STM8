@@ -34,8 +34,8 @@ void Hepa_Time_Conversion()
 struct Peripheral Peripheral_Conversion()
 {
   
-  peripheral.a11 = (float)Peripheral_Realy.a11/1024*Peripheral_A11_Max;
-  peripheral.a12 = (float)Peripheral_Realy.a12/1024*100;
+  peripheral.a11 = (float)Peripheral_Realy.a11/1024*50*100;
+  peripheral.a12 = (float)Peripheral_Realy.a12/1024*100*70;
   peripheral.a13 = (float)Peripheral_Realy.a13/1024*100;
   peripheral.Door_Do = Peripheral_Realy.Door_Do;
   peripheral.Door_Up = Peripheral_Realy.Door_Up;
@@ -71,7 +71,7 @@ void main()
     KeyHandle.Door_State = 2;
     alldate_Updata = 1;
 #endif  
-    //值班模式 选择完了再改
+    //脰碌掳脿脛拢脢陆 脩隆脭帽脥锚脕脣脭脵赂脛
     while(1)
     {
 #if 1 
