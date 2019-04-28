@@ -10,9 +10,15 @@ void Gpio_Init(void)
 void Back_Light_On()
 {
     GPIO_WriteHigh(BACK_LIGHT_PROT,BACK_LIGHT_PIN_1);
+<<<<<<< HEAD
     GPIO_WriteHigh(BACK_LIGHT_PROT,BACK_LIGHT_PIN_2);
     GPIO_WriteHigh(BACK_LIGHT_PROT,BACK_LIGHT_PIN_3);
     GPIO_WriteHigh(BACK_LIGHT_PROT,BACK_LIGHT_PIN_4);  
+=======
+   GPIO_WriteHigh(BACK_LIGHT_PROT,BACK_LIGHT_PIN_2);
+   GPIO_WriteHigh(BACK_LIGHT_PROT,BACK_LIGHT_PIN_3);
+   GPIO_WriteHigh(BACK_LIGHT_PROT,BACK_LIGHT_PIN_4);  
+>>>>>>> e941cfb1e7f1c2cd66d0fdeab945266a4984030a
 }
 void Back_Light_Off()
 {
