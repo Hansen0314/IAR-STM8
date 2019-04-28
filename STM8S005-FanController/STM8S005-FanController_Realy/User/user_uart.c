@@ -80,17 +80,24 @@ void Uart_IT_Receive_Control(u8* data)
       GPIO_WriteHigh(DOOR_UP_PORT,DOOR_UP_PIN);
       GPIO_WriteLow(DOOR_DO_PORT,DOOR_DO_PIN);      
     }
+<<<<<<< HEAD
     else if(data[4] == 1)
+=======
+    else
+>>>>>>> a36191f09099a2b197876ab47a3747ac98373da6
     {
       GPIO_WriteHigh(DOOR_DO_PORT,DOOR_DO_PIN);
       GPIO_WriteLow(DOOR_UP_PORT,DOOR_UP_PIN);      
     }
+<<<<<<< HEAD
     else
     {
       GPIO_WriteLow(DOOR_DO_PORT,DOOR_DO_PIN);
       GPIO_WriteLow(DOOR_UP_PORT,DOOR_UP_PIN);           
     }
     
+=======
+>>>>>>> a36191f09099a2b197876ab47a3747ac98373da6
   }
   /*
   if(data[1] == FAN_OFF)

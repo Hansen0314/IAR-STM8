@@ -48,7 +48,11 @@
         <Freq>16000000</Freq>
     </Simulator>
     <DebugChecksum>
+<<<<<<< HEAD
         <Checksum>3206951997</Checksum>
+=======
+        <Checksum>222122987</Checksum>
+>>>>>>> a36191f09099a2b197876ab47a3747ac98373da6
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -80,11 +84,16 @@
         <Count>1</Count>
     </Breakpoints>
     <Aliases>
+<<<<<<< HEAD
         <A0>_ "E:\工作\胡老师\风扇控制器\IAR-STM8\STM8S005-FanController\STM8S005-FanController_Realy\STM8S_StdPeriph_Driver\src\stm8s_adc1.c" ""</A0>
         <A1>_ "E:\工作\胡老师\风扇控制器\IAR-STM8\STM8S005-FanController\STM8S005-FanController_Realy\User\main.c" ""</A1>
         <A2>_ "E:\工作\胡老师\风扇控制器\IAR-STM8\STM8S005-FanController\STM8S005-FanController_Realy\User\user_uart.c" ""</A2>
         <Count>3</Count>
         <SuppressDialog>1</SuppressDialog>
+=======
+        <Count>0</Count>
+        <SuppressDialog>0</SuppressDialog>
+>>>>>>> a36191f09099a2b197876ab47a3747ac98373da6
     </Aliases>
     <DebuggerSettings>
         <DisableInterruptsWhenStepping>0</DisableInterruptsWhenStepping>
