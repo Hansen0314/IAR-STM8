@@ -11,6 +11,9 @@ struct Peripheral peripheral;
 extern struct Hepa hepa;
 uint8_t ii;
 #define RxBufferSize 64
+u16 Now_time;    
+u16 Pm_On_Time; 
+u16 Pm_Off_Time; 
 extern u8 RxBuffer[RxBufferSize];
 extern u8 UART_RX_NUM;
 struct ALLDATE Ds1302_Alldate;
@@ -21,9 +24,11 @@ extern u16 Door_Move_time;
 extern u8 Uart;
 extern u8 Uart_Char;
 extern u8 alldate_Updata;
+struct KEYHANDLE KeyHandle_Init;
 u8 day;
 u8 hour;
 u8 KeyVaule;
+u8 Pm_OnState;
 extern u8 Uart_Char_Num;
   float a12;
   u16 a12_1;
@@ -31,11 +36,12 @@ extern u8 Uart_Char_Num;
   float a12_next;
   float a12_math;
 u8 a12_str[10];
-void Hepa_Time_Conversion()
+void Time_Conversion()
 {
-    day = Ds1302_Alldate.md.date - Ds1302_Alldate_Init.md.date; 
-    hour = Ds1302_Alldate.hms.hour - Ds1302_Alldate_Init.hms.hour;
-    hepa_time = day*24 + hour;
+    hepa_time   = Ds1302_Alldate.md.date*24+Ds1302_Alldate.hms.hour-Ds1302_Alldate_Init.md.date*24+Ds1302_Alldate_Init.hms.hour;
+    Now_time    = Ds1302_Alldate.md.date*24*60+Ds1302_Alldate.hms.hour*60+Ds1302_Alldate.hms.min;
+    Pm_On_Time  = KeyHandle.Pm_State.On_alldate.md.date*24*60+KeyHandle.Pm_State.On_alldate.hms.hour*60+KeyHandle.Pm_State.On_alldate.hms.min;
+    Pm_Off_Time = KeyHandle.Pm_State.Off_alldate.md.date*24*60+KeyHandle.Pm_State.Off_alldate.hms.hour*60+KeyHandle.Pm_State.Off_alldate.hms.min;
 }
 struct Peripheral Peripheral_Conversion()
 {
@@ -53,6 +59,20 @@ struct Peripheral Peripheral_Conversion()
   return peripheral;
   
 }
+void FLASH_Init()
+{
+  u32  add;
+  FLASH_SetProgrammingTime(FLASH_PROGRAMTIME_STANDARD);
+  FLASH_Unlock(FLASH_MEMTYPE_DATA);
+  
+  add = 0x40A5;
+  FLASH_ProgramByte(add,Ds1302_Alldate_Init.md.date);
+  add = 0x40A6;
+  FLASH_ProgramByte(add,Ds1302_Alldate_Init.hms.hour); 
+  
+  Ds1302_Alldate_Init.md.date = FLASH_ReadByte(add-1);
+  Ds1302_Alldate_Init.hms.hour = FLASH_ReadByte(add);
+}
 void main()
 {  
     
@@ -63,7 +83,6 @@ void main()
     Tim4_Init();
     Tim1_Init();
     Gpio_Init();   
-    
     ht1621_init();
     enableInterrupts();
     KeyBorad_PinInit();
@@ -71,8 +90,9 @@ void main()
     Ds1302_Init();
     Ds1302_Alldate = ds1302_readTime(); 
     Ds1302_Alldate_Init = Ds1302_Alldate;
+    //FLASH_Init();
     KeyHandle.Door_State = 0;
-    hepa.Fan_Seepd = 100;
+    hepa.Fan_Seepd = 40;
     hepa.Work_Time = 100;
     KeyHandle.Led_P1_State = 0;
     KeyHandle.Led_P2_State = 0;
@@ -80,6 +100,8 @@ void main()
     KeyHandle.Door_State = 2;
     KeyHandle.Dis_Door_State = 2;
     KeyHandle.HEAP_Dis_State = 2;
+    KeyHandle.Pm_State.Dis_Door_State = 2;
+    KeyHandle.Od_State.Dis_Door_State = 2;
     alldate_Updata = 1;
     //Peripheral_A11_Max = 50;
 #endif  
@@ -87,56 +109,81 @@ void main()
     while(1)
     {
 #if 1 
-      
-      if(KeyHandle.Oper_Mode_Dis_State == 2)
+      Ds1302_Alldate = ds1302_readTime();
+      Time_Conversion();
+      if((KeyHandle.Oper_Mode_Dis_State == 2)&&(KeyHandle.Oper_Mode_State == 0))
       {
-        if(KeyHandle.Oper_Mode_State == 0)
+        if(Now_time < Pm_On_Time) //当前时间小于预约开机时间 那么关机 直到开机时间在开机
+        {  
+          ht1621_Clear();
+          KeyHandle_Init.Pm_State.Led_P1_State = 0;
+          KeyHandle_Init.Pm_State.Led_P2_State = 0;
+          KeyHandle_Init.Pm_State.Fan_State = 0;
+          KeyHandle_Init.Pm_State.Door_State = 3;    
+          Uart_Transmit_Hnadle(KeyHandle_Init);
+          TIM1_Cmd(DISABLE);
+          while(1)
+          {
+            Ds1302_Alldate = ds1302_readTime();
+            Time_Conversion();
+            Now_Time_Display(Ds1302_Alldate,KeyHandle);    
+            if(Now_time >= Pm_On_Time)
+            {
+              Pm_OnState = 1;
+              Uart_Transmit_Hnadle(KeyHandle);
+              TIM1_Cmd(ENABLE);
+              break;
+            }
+            //if()
+          }  
+        }
+        if(Pm_OnState == 1)
         {
-          if((Ds1302_Alldate.md.date == KeyHandle.Pm_State.Off_alldate.md.date)&&(Ds1302_Alldate.hms.hour == KeyHandle.Pm_State.Off_alldate.hms.hour)&&(Ds1302_Alldate.hms.min == KeyHandle.Pm_State.Off_alldate.hms.min))
+          if(Now_time > Pm_Off_Time)
           {
             ht1621_Clear();
-            KeyHandle.Pm_State.Led_P1_State = 0;
-            KeyHandle.Pm_State.Led_P2_State = 0;
-            KeyHandle.Pm_State.Fan_State = 0;
-            KeyHandle.Pm_State.Door_State = 3;
-            
-            Uart_Transmit_Hnadle(KeyHandle);
+            KeyHandle_Init.Pm_State.Led_P1_State = 0;
+            KeyHandle_Init.Pm_State.Led_P2_State = 0;
+            KeyHandle_Init.Pm_State.Fan_State = 0;
+            KeyHandle_Init.Pm_State.Door_State = 3;    
+            Uart_Transmit_Hnadle(KeyHandle_Init);
+            TIM1_Cmd(DISABLE);            
+            Pm_OnState = 0;
             while(1)
             {
               Ds1302_Alldate = ds1302_readTime();
-              Now_Time_Display(Ds1302_Alldate,KeyHandle); 
-              if((Ds1302_Alldate.yd.day == KeyHandle.Pm_State.On_alldate.yd.day)&&(Ds1302_Alldate.hms.hour == KeyHandle.Pm_State.On_alldate.hms.hour)&&(Ds1302_Alldate.hms.min == KeyHandle.Pm_State.On_alldate.hms.min))
+              Time_Conversion();
+              Now_Time_Display(Ds1302_Alldate,KeyHandle);                
+              KeyVaule=KeyBorad_Scan();
+              if(KeyVaule == S8_DOWN_VALUE) 
               {
-                  KeyHandle.Led_P1_State = 0;
-                  KeyHandle.Led_P2_State = 0;
-                  KeyHandle.Fan_State = 0;
-                  KeyHandle.Door_State = 2;
-                  KeyHandle.Oper_Mode_Dis_State = 0;
-                  break;
-              }
-              else
-              {
-                KeyVaule=KeyBorad_Scan();
-                if(KeyVaule == S8_DOWN_VALUE) 
-                {
-                  KeyHandle.Led_P1_State = 0;
-                  KeyHandle.Led_P2_State = 0;
-                  KeyHandle.Fan_State = 0;
-                  KeyHandle.Door_State = 2;
-                  KeyHandle.Oper_Mode_Dis_State = 0;
-                  break;
-                } 
-              }
-            } 
+                KeyHandle.Led_P1_State = 0;
+                KeyHandle.Led_P2_State = 0;
+                KeyHandle.Fan_State = 0;
+                KeyHandle.Door_State = 2;
+                KeyHandle.Oper_Mode_Dis_State = 0;
+                TIM1_Cmd(ENABLE);
+                break;
+              }               
+            }   
           }
         }
-      }  
-      
-      
-      Ds1302_Alldate = ds1302_readTime();
-      Hepa_Time_Conversion();
+      }      
       Display_all(Peripheral_Conversion(),KeyHandle,hepa,Ds1302_Alldate); 
       KeyBorad_Hnadle(KeyBorad_Scan());
+      if((hepa.Fan_Seepd > peripheral.a11)||(hepa.Work_Time < hepa_time)) 
+      {
+        KeyHandle.Er = 1;
+        KeyHandle.Od_State.Er = 1;
+        KeyHandle.Pm_State.Er = 1;
+      //Uart_Transmit_Hnadle(KeyHandle);
+      }
+      else
+      {
+        KeyHandle.Er = 0;
+        KeyHandle.Od_State.Er = 0;
+        KeyHandle.Pm_State.Er = 0;
+      }
       if(KeyHandle.Oper_Mode_State == 0)
       {
         Uart_Transmit_Hnadle(KeyHandle);

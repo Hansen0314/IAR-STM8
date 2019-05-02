@@ -27,6 +27,8 @@
 #include "delay.h"
 #include "user_uart.h"
 u16 Tim1_Count; 
+u8 Dis_Fr;
+u8 Dis_Dp;
 u8 Dis_Bling;
 u8 Dis_Door_Bling=1;
 u8 Dis_Door_Err_Bling;
@@ -259,6 +261,8 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
       Dis_Door_Err_Bling = 1;
       Dis_Time = 1;
       Dis_Pm_time = 1;
+      Dis_Fr = 1;
+      Dis_Dp = 1; 
     }
     else
     {
@@ -268,6 +272,8 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
       Dis_Err_Bling = 0;
       Dis_Door_Err_Bling = 0;
       Dis_Time = 0;      
+      Dis_Fr = 0;
+      Dis_Dp = 0;
       Door_Move_time ++;
     }
   }    

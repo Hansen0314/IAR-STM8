@@ -48,7 +48,7 @@
         <Freq>16000000</Freq>
     </Simulator>
     <DebugChecksum>
-        <Checksum>3206951997</Checksum>
+        <Checksum>1177140196</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -77,7 +77,8 @@
     </TermIOLog>
     <Breakpoints>
         <Bp0>_ "STD_CODE" "{$PROJ_DIR$\User\main.c}.80.3" 0 0 0 0 "" 0 ""</Bp0>
-        <Count>1</Count>
+        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\User\user_uart.c}.48.3" 1 0 0 0 "" 0 ""</Bp1>
+        <Count>2</Count>
     </Breakpoints>
     <Aliases>
         <A0>_ "E:\工作\胡老师\风扇控制器\IAR-STM8\STM8S005-FanController\STM8S005-FanController_Realy\STM8S_StdPeriph_Driver\src\stm8s_adc1.c" ""</A0>

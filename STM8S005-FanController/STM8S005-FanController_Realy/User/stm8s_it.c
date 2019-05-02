@@ -43,7 +43,7 @@ uint8_t RxBuffer[RxBufferSize];
 uint8_t UART_RX_NUM=0;
 uint8_t Res_Last;
 u8 Uart_Char_Num = 0;
-u8 Uart_Char_c[6] = {0};
+u8 Uart_Char_c[7] = {0};
 #ifdef _COSMIC_
 /**
   * @brief Dummy Interrupt routine

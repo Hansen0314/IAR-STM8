@@ -23,9 +23,9 @@ param([String]$debugfile = "");
 
 if ($debugfile -eq "")
 {
-& "D:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "J:\3、工作相关\2、工程\调速风机\程序\STM8S005_FanController_Display v1.6(修复pm wm BUG)\STM8S005_FanController_Display v1.1\settings\GPIO.Debug.general.xcl" --backend -f "J:\3、工作相关\2、工程\调速风机\程序\STM8S005_FanController_Display v1.6(修复pm wm BUG)\STM8S005_FanController_Display v1.1\settings\GPIO.Debug.driver.xcl" 
+& "E:\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "E:\工作\胡老师\风扇控制器\IAR-STM8\STM8S005-FanController\STM8S005_FanController_Display v1.1\settings\GPIO.Debug.general.xcl" --backend -f "E:\工作\胡老师\风扇控制器\IAR-STM8\STM8S005-FanController\STM8S005_FanController_Display v1.1\settings\GPIO.Debug.driver.xcl" 
 }
 else
 {
-& "D:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "J:\3、工作相关\2、工程\调速风机\程序\STM8S005_FanController_Display v1.6(修复pm wm BUG)\STM8S005_FanController_Display v1.1\settings\GPIO.Debug.general.xcl" --debug_file=$debugfile --backend -f "J:\3、工作相关\2、工程\调速风机\程序\STM8S005_FanController_Display v1.6(修复pm wm BUG)\STM8S005_FanController_Display v1.1\settings\GPIO.Debug.driver.xcl" 
+& "E:\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "E:\工作\胡老师\风扇控制器\IAR-STM8\STM8S005-FanController\STM8S005_FanController_Display v1.1\settings\GPIO.Debug.general.xcl" --debug_file=$debugfile --backend -f "E:\工作\胡老师\风扇控制器\IAR-STM8\STM8S005-FanController\STM8S005_FanController_Display v1.1\settings\GPIO.Debug.driver.xcl" 
 }

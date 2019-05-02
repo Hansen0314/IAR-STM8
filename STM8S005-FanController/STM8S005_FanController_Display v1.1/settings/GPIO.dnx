@@ -24,7 +24,7 @@
         <ShowSource>1</ShowSource>
     </Trace1>
     <DebugChecksum>
-        <Checksum>2914153013</Checksum>
+        <Checksum>2605652446</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -105,8 +105,9 @@
         <Count>0</Count>
     </Breakpoints>
     <Aliases>
-        <Count>0</Count>
-        <SuppressDialog>0</SuppressDialog>
+        <A0>_ "J:\3、工作相关\2、工程\调速风机\程序\STM8S005_FanController_Display v1.6(修复pm wm BUG)\STM8S005_FanController_Display v1.1\STM8S_StdPeriph_Driver\src\stm8s_uart2.c" ""</A0>
+        <Count>1</Count>
+        <SuppressDialog>1</SuppressDialog>
     </Aliases>
     <DebuggerSettings>
         <DisableInterruptsWhenStepping>0</DisableInterruptsWhenStepping>

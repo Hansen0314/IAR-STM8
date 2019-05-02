@@ -10,6 +10,8 @@ extern u8 Dis_Time;
 extern u8 Dis_Pm_time;
 u16 Door_Move_time;
 u8 alldate_Updata;
+extern u8 Dis_Fr;
+extern u8 Dis_Dp;
 struct KEYHANDLE KeyHandle_Door;
 //1 ~ 11
 const unsigned char Dis_Digitron_Addr[] = 
@@ -363,10 +365,21 @@ void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_Sta
         
       
       if(peripheral.Dp == 1) ht1621_Char_write1(1,T_Addr[14],T_Mask[14],0,0);
-      else if (peripheral.Dp == 0) ht1621_Char_write1(1,T_Addr[14],T_Mask[14],1,0);
-      
+      else if (peripheral.Dp == 0) 
+      {
+        if(Dis_Dp)
+        ht1621_Char_write1(1,T_Addr[14],T_Mask[14],1,0);  
+        else
+        ht1621_Char_write1(1,T_Addr[14],T_Mask[14],0,0);  
+      }
       if(peripheral.Fr == 1) ht1621_Char_write1(1,T_Addr[13],T_Mask[13],0,0);
-      else if (peripheral.Fr == 0) ht1621_Char_write1(1,T_Addr[13],T_Mask[13],1,0);  
+      else if (peripheral.Fr == 0) 
+      {
+        if(Dis_Fr)
+        ht1621_Char_write1(1,T_Addr[13],T_Mask[13],1,0);  
+        else
+        ht1621_Char_write1(1,T_Addr[13],T_Mask[13],0,0);  
+      }
 }
 void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle,struct Peripheral peripheral)
 {
@@ -381,6 +394,26 @@ void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle,struct Periphe
       ht1621_Char_write1(2,Dis_Digitron_Addr[13],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%1000/100],1,1);
       ht1621_Char_write1(2,Dis_Digitron_Addr[14],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%100/10],1,1); 
       ht1621_Char_write1(2,Dis_Digitron_Addr[15],Cs2_12_15_Dis_Digitron_Num[hepa.Work_Time%10],1,1);  
+      if((hepa.Fan_Seepd > peripheral.a11)||(hepa.Work_Time < hepa_time)) 
+      {
+        if(Dis_Err_Bling)
+        {
+          ht1621_Char_write1(1,T_Addr[15],T_Mask[15],1,0);
+          ht1621_Char_write1(1,T_Addr[2],T_Mask[2],1,0);
+        //Dis_Err_Bling = 0;
+        }
+        else
+        {
+          ht1621_Char_write1(1,T_Addr[15],T_Mask[15],0,0);
+          ht1621_Char_write1(1,T_Addr[2],T_Mask[2],0,0);      
+        }
+      }
+      else 
+      {
+        ht1621_Char_write1(1,T_Addr[15],T_Mask[15],0,0);
+        ht1621_Char_write1(1,T_Addr[2],T_Mask[2],0,0);
+      }
+      //风机风速小于设定值或当前工作时间大于设定值 都将触发
       //if(hepa.Fan_Seepd > )          
    }
    else
@@ -431,25 +464,7 @@ void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle,struct Periphe
      }
      
    }
-  if((hepa.Fan_Seepd > peripheral.a11)||(hepa.Work_Time < hepa_time)) 
-  {
-    if(Dis_Err_Bling)
-    {
-      ht1621_Char_write1(1,T_Addr[15],T_Mask[15],1,0);
-      ht1621_Char_write1(1,T_Addr[2],T_Mask[2],1,0);
-      //Dis_Err_Bling = 0;
-    }
-    else
-    {
-      ht1621_Char_write1(1,T_Addr[15],T_Mask[15],0,0);
-      ht1621_Char_write1(1,T_Addr[2],T_Mask[2],0,0);      
-    }
-  }
-  else 
-  {
-    ht1621_Char_write1(1,T_Addr[15],T_Mask[15],0,0);
-    ht1621_Char_write1(1,T_Addr[2],T_Mask[2],0,0);
-  }
+
 }
 void Oper_Mode_Disply(u8 Oper_Mode_State,u8 Oper_Mode_Dis_State)
 {
@@ -813,7 +828,8 @@ void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandl)
       }       
       Week_Display(alldate.yd.day);
     }
-    else if(KeyHandle.Oper_Mode_Dis_State == 0)
+//    else if(KeyHandle.Oper_Mode_Dis_State == 0)
+    else
     {
         alldate_Updata = 1;
         if(KeyHandle.Time_State == 1)
@@ -1364,6 +1380,7 @@ void Display_all(struct Peripheral peripheral,struct KEYHANDLE KeyHandle,struct 
         KeyHandle.Led_P2_State = 0;
         Uart_Transmit_Hnadle(KeyHandle);
       }
+
       Led_P2_State_Display(KeyHandle.Led_P2_State);
       Led_P1_State_Display(KeyHandle.Led_P1_State);
       Door_State_Display(KeyHandle.Dis_Door_State,peripheral,KeyHandle.Oper_Mode_State);
@@ -1382,11 +1399,20 @@ void Display_all(struct Peripheral peripheral,struct KEYHANDLE KeyHandle,struct 
           KeyHandle.Od_State.Led_P2_State = 0;
           Uart_Transmit_Hnadle(KeyHandle);
         }
+        if((Hepa.Fan_Seepd > peripheral.a11)||(Hepa.Work_Time < hepa_time)) 
+        {
+          KeyHandle.Od_State.Er = 1;
+          //Uart_Transmit_Hnadle(KeyHandle);
+        }
+        else KeyHandle.Od_State.Er = 0;
       }
+
       Fan_Speed_State_Display(KeyHandle.Od_State.Fan_State);
       Led_P2_State_Display(KeyHandle.Od_State.Led_P2_State);
       Led_P1_State_Display(KeyHandle.Od_State.Led_P1_State);
       Door_State_Display(KeyHandle.Od_State.Dis_Door_State,peripheral,KeyHandle.Oper_Mode_State);
+      Now_Time_Display(alldate,KeyHandle); 
+      Hepa_Set_Display(Hepa,KeyHandle,peripheral);
     }
     else if(KeyHandle.Oper_Mode_Dis_State == 2)
     {
@@ -1397,13 +1423,20 @@ void Display_all(struct Peripheral peripheral,struct KEYHANDLE KeyHandle,struct 
           KeyHandle.Pm_State.Led_P2_State = 0;
           Uart_Transmit_Hnadle(KeyHandle);
         }
+        if((Hepa.Fan_Seepd > peripheral.a11)||(Hepa.Work_Time < hepa_time)) 
+        {
+          KeyHandle.Pm_State.Er = 1;
+         // Uart_Transmit_Hnadle(KeyHandle);
+        }
+        else KeyHandle.Pm_State.Er = 0;
       }    
+
       Fan_Speed_State_Display(KeyHandle.Pm_State.Fan_State);
       Led_P2_State_Display(KeyHandle.Pm_State.Led_P2_State);
       Led_P1_State_Display(KeyHandle.Pm_State.Led_P1_State);
       Door_State_Display(KeyHandle.Pm_State.Dis_Door_State,peripheral,KeyHandle.Oper_Mode_State);
       Now_Time_Display(alldate,KeyHandle); 
-  
+      Hepa_Set_Display(Hepa,KeyHandle,peripheral);
     }
     Peripheral_Rceive_Display(peripheral,KeyHandle.Fan_Seepd_Max_State);
     ht1621_char_display();

@@ -54,7 +54,7 @@ void Uart_IT_Receive_Hnadle(u8* str)
 }
 void Uart_Transmit_Hnadle(struct KEYHANDLE KeyHandle)
 {
-  uint8_t str_KeyHandle[6] = {0};
+  uint8_t str_KeyHandle[7] = {0};
   
   str_KeyHandle[0] = 0Xfd;
   
@@ -68,6 +68,8 @@ void Uart_Transmit_Hnadle(struct KEYHANDLE KeyHandle)
     str_KeyHandle[3] = KeyHandle.Fan_State;
 
     str_KeyHandle[4] = KeyHandle.Door_State;  // 2 UP 1 DO
+    
+    str_KeyHandle[5] = KeyHandle.Er;
   }
   else if(KeyHandle.Oper_Mode_Dis_State ==1)
   {
@@ -79,6 +81,8 @@ void Uart_Transmit_Hnadle(struct KEYHANDLE KeyHandle)
     str_KeyHandle[3] = KeyHandle.Od_State.Fan_State;
 
     str_KeyHandle[4] = KeyHandle.Od_State.Door_State;  // 2 UP 1 DO  
+    
+    str_KeyHandle[5] = KeyHandle.Od_State.Er;
   
   }
   else if(KeyHandle.Oper_Mode_Dis_State == 2)
@@ -90,117 +94,11 @@ void Uart_Transmit_Hnadle(struct KEYHANDLE KeyHandle)
     str_KeyHandle[3] = KeyHandle.Pm_State.Fan_State;
 
     str_KeyHandle[4] = KeyHandle.Pm_State.Door_State;  // 2 UP 1 DO   
+    
+    str_KeyHandle[5] = KeyHandle.Od_State.Er;
+    
   }
-  str_KeyHandle[5] = 0xff;
-  
-  /*
-  else if(KeyHandle.Oper_Mode_Dis_State == 1)
-  {
-    if(KeyHandle.Od_State.Led_P1_State == 1)
-    {
-      Transmit_Data = LED_P1_ON;
-      uart2SendByte(Transmit_Data);
-    }
-    else if(KeyHandle.Od_State.Led_P1_State == 0)
-    {
-      Transmit_Data = LED_P1_OFF;
-      uart2SendByte(Transmit_Data);
-    }    
-    if(KeyHandle.Od_State.Led_P2_State == 1)
-    {
-      Transmit_Data = LED_P2_ON;
-      uart2SendByte(Transmit_Data);
-    }
-    else if(KeyHandle.Od_State.Led_P2_State == 0)
-    {
-      Transmit_Data = LED_P2_OFF;
-      uart2SendByte(Transmit_Data);
-    }    
-    if(KeyHandle.Od_State.Fan_State == 0)
-    {
-      Transmit_Data = FAN_OFF;
-      uart2SendByte(Transmit_Data);
-    }
-    else if(KeyHandle.Od_State.Fan_State == 1)
-    {
-      Transmit_Data = FAN_ON_L;
-      uart2SendByte(Transmit_Data);
-    }
-    else if(KeyHandle.Od_State.Fan_State == 2)
-    {
-      Transmit_Data = FAN_ON_M;
-      uart2SendByte(Transmit_Data);
-    }     
-    else if (KeyHandle.Od_State.Fan_State == 3)
-    {
-      Transmit_Data = FAN_ON_B;
-      uart2SendByte(Transmit_Data);
-    } 
-    if(KeyHandle.Od_State.Door_State == 2)
-    {
-      Transmit_Data = DOOR_UP_ON;
-      uart2SendByte(Transmit_Data);
-    }
-    else if(KeyHandle.Od_State.Door_State == 1)
-    {
-      Transmit_Data = DOOR_DO_ON;
-      uart2SendByte(Transmit_Data);
-    }
-    //¹ÊÕÏ±¨¾¯¿ª¹Ø
-  }
-  else if(KeyHandle.Oper_Mode_Dis_State == 2)
-  {
-    if(KeyHandle.Pm_State.Led_P1_State == 1)
-    {
-      Transmit_Data = LED_P1_ON;
-      uart2SendByte(Transmit_Data);
-    }
-    else if(KeyHandle.Pm_State.Led_P1_State == 0)
-    {
-      Transmit_Data = LED_P1_OFF;
-      uart2SendByte(Transmit_Data);
-    }    
-    if(KeyHandle.Pm_State.Led_P2_State == 1)
-    {
-      Transmit_Data = LED_P2_ON;
-      uart2SendByte(Transmit_Data);
-    }
-    else if(KeyHandle.Pm_State.Led_P2_State == 0)
-    {
-      Transmit_Data = LED_P2_OFF;
-      uart2SendByte(Transmit_Data);
-    }    
-    if(KeyHandle.Pm_State.Fan_State == 0)
-    {
-      Transmit_Data = FAN_OFF;
-      uart2SendByte(Transmit_Data);
-    }
-    else if(KeyHandle.Pm_State.Fan_State == 1)
-    {
-      Transmit_Data = FAN_ON_L;
-      uart2SendByte(Transmit_Data);
-    }
-    else if(KeyHandle.Pm_State.Fan_State == 2)
-    {
-      Transmit_Data = FAN_ON_M;
-      uart2SendByte(Transmit_Data);
-    }     
-    else if (KeyHandle.Pm_State.Fan_State == 3)
-    {
-      Transmit_Data = FAN_ON_B;
-      uart2SendByte(Transmit_Data);
-    } 
-    if(KeyHandle.Pm_State.Door_State == 2)
-    {
-      Transmit_Data = DOOR_UP_ON;
-      uart2SendByte(Transmit_Data);
-    }
-    else if(KeyHandle.Pm_State.Door_State == 1)
-    {
-      Transmit_Data = DOOR_DO_ON;
-      uart2SendByte(Transmit_Data);
-    }  
-  }
-  */
-  uart2SendString(str_KeyHandle,6);
+  str_KeyHandle[6] = 0xff;
+
+  uart2SendString(str_KeyHandle,7);
 }

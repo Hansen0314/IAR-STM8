@@ -144,6 +144,7 @@ void ds1302_setTime(struct ALLDATE allDate)
 struct ALLDATE ds1302_readTime( void )
 {
 	struct ALLDATE allDate;
+        ds1302_writeByte(0x8e, 0x00);//control为的最高位wp
 	allDate.yd.year = ds1302_readByte(0x8d); //year
 	allDate.yd.day = ds1302_readByte(0x8b); //day
 	allDate.md.month = ds1302_readByte(0x89); //month
@@ -158,7 +159,7 @@ struct ALLDATE ds1302_readTime( void )
 void Ds1302_Init()
 {
 	struct ALLDATE allDate;
-	allDate.yd.year = 18;
+	allDate.yd.year = 19;
 	allDate.yd.day = 5;
 	allDate.md.month = 10;
 	allDate.md.date = 20;
@@ -166,5 +167,5 @@ void Ds1302_Init()
         allDate.hms.min = 15;
         allDate.hms.sec = 30;
         ds1302_port_init();
-	ds1302_setTime(allDate);
+	//ds1302_setTime(allDate);
 }

@@ -597,6 +597,11 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         {
           KeyHandle.Oper_Mode_State = 0;
           Door_Move_time = 0;
+//          if(KeyHandle.Wm_Num > 9)
+//          {
+//          
+//          
+//          }
         }
       break;      
       default : 

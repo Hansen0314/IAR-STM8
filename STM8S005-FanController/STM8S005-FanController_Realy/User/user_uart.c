@@ -45,7 +45,7 @@ int fputc(int ch, FILE *f)
 #endif
 void Uart_IT_Receive_Control(u8* data)
 {
-  if(data[5] == 0Xff)
+  if(data[6] == 0Xff)
   {
     if(data[1] == 0)GPIO_WriteLow(LED_PORT,LED_P1_PIN);
     else GPIO_WriteHigh(LED_PORT,LED_P1_PIN);
@@ -90,7 +90,14 @@ void Uart_IT_Receive_Control(u8* data)
       GPIO_WriteLow(DOOR_DO_PORT,DOOR_DO_PIN);
       GPIO_WriteLow(DOOR_UP_PORT,DOOR_UP_PIN);           
     }
-    
+    if(data[5] == 1)
+    {
+      GPIO_WriteHigh(ER_PORT,ER_PIN);
+    }
+    else
+    {
+      GPIO_WriteLow(ER_PORT,ER_PIN);
+    }
   }
   /*
   if(data[1] == FAN_OFF)

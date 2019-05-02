@@ -49,14 +49,14 @@ void main()
 //        printf("%d \n",peripheral.Door_Do);
 //        printf("%d \n",peripheral.Door_Up);
       }
-      if(peripheral.Dp & peripheral.Fr)
-      {
-        GPIO_WriteLow(ER_PORT,ER_PIN);
-      }
-      else
-      {
-        GPIO_WriteHigh(ER_PORT,ER_PIN);
-      }    
+//      if(peripheral.Dp & peripheral.Fr)
+//      {
+//        GPIO_WriteLow(ER_PORT,ER_PIN);
+//      }
+//      else
+//      {
+//        GPIO_WriteHigh(ER_PORT,ER_PIN);
+//      }    
 #endif
     }
 }

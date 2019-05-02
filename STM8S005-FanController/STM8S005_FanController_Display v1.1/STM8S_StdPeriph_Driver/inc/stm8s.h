@@ -242,7 +242,6 @@ struct Peripheral
   u16 a13;
   u8 Door_Do;
   u8 Door_Up; 
-  
 };
 struct HMS{
 	unsigned char hour;
@@ -270,6 +269,7 @@ struct Od_StatE
   u8 Fan_State;
   u8 Od_Num;
   u8 Dis_Door_State;
+  u8 Er;
 };
 struct PM_StatE
 {
@@ -282,6 +282,7 @@ struct PM_StatE
   struct ALLDATE Off_alldate;
   u8 Pm_Num;
   u8 Dis_Door_State;
+  u8 Er;
 };
 struct KEYHANDLE{
     u8 Fan_State;
@@ -296,6 +297,7 @@ struct KEYHANDLE{
     u8 Oper_Mode_Dis_State;
     u8 Time_State;
     u8 Wm_Num;
+    u8 Er;
     struct Od_StatE Od_State;
     struct PM_StatE Pm_State;
     struct ALLDATE AllDate;
