@@ -56,7 +56,7 @@ void Now_Time_Display(struct ALLDATE alldate , struct KEYHANDLE KeyHandle);
 void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle,struct Peripheral peripheral);
 void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_State);
 void Fan_Speed_State_Display(u8 Fan_Seepd_State);
-void Door_State_Display(u8 Door_State,struct Peripheral peripheral);
+void Door_State_Display(u8 Door_State,struct Peripheral peripheral,u8 Oper_Mode_State);
 void Display_all(struct Peripheral peripheral,struct KEYHANDLE KeyHandle,struct Hepa Hepa,struct ALLDATE alldate);
 extern const unsigned char Dis_Digitron_Addr[];
 extern const unsigned char Cs1_Dis_Digitron_Num[];

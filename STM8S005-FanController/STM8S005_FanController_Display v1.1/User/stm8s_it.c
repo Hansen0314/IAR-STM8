@@ -35,6 +35,7 @@ u8 Uart;
 u8 Uart_Char;
 u8 Uart_Char_Num;
 u8 Dis_Time;
+u8 Dis_Pm_time;
 u8 Uart_Char_c[14] = {0};
 extern u16 Door_Move_time;
 bool Dis;
@@ -257,9 +258,11 @@ INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
       Dis_Door_Bling = 1;
       Dis_Door_Err_Bling = 1;
       Dis_Time = 1;
+      Dis_Pm_time = 1;
     }
     else
     {
+      Dis_Pm_time = 0;
       Dis_Bling = 0;
       Dis_Door_Bling = 0;
       Dis_Err_Bling = 0;
@@ -433,7 +436,7 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
         Uart_Char_c[Uart_Char_Num] = uart2ReceiveByte(); 
         Uart_Char_Num++;
         
-        /*(USART1->DR);¶ÁÈ¡½ÓÊÕµ½µÄÊý¾Ý,µ±¶ÁÍêÊý¾Ýºó×Ô¶¯È¡ÏûRXNEµÄÖÐ¶Ï±êÖ¾Î»*/
+        /*(USART1->DR);ï¿½ï¿½È¡ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ýºï¿½ï¿½Ô¶ï¿½È¡ï¿½ï¿½RXNEï¿½ï¿½ï¿½Ð¶Ï±ï¿½Ö¾Î»*/
         //printf("%o \n",Res);
         //uart2SendByte(Res);
         	 

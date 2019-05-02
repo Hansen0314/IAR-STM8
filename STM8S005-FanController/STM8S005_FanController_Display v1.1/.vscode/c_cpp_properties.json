@@ -3,8 +3,7 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**",
-                "E:/IAR Systems/Embedded Workbench 8.0/stm8/inc/c/**"
+                "${workspaceFolder}/**"
             ],
             "defines": [
                 "_DEBUG",

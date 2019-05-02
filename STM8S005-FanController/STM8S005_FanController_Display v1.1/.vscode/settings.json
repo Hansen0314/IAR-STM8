@@ -5,7 +5,10 @@
         "ds1302.h": "c",
         "stm8s.h": "c",
         "ht1621.h": "c",
-        "keyborad.h": "c"
+        "keyborad.h": "c",
+        "stm8s_it.h": "c",
+        "stm8s_conf.h": "c"
     },
-    "C_Cpp.errorSquiggles": "Disabled"
+    "C_Cpp.errorSquiggles": "Disabled",
+    "git.ignoreLimitWarning": true
 }

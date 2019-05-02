@@ -67,7 +67,7 @@ void Uart_Transmit_Hnadle(struct KEYHANDLE KeyHandle)
 
     str_KeyHandle[3] = KeyHandle.Fan_State;
 
-    str_KeyHandle[4] = KeyHandle.Door_State;  // 2 UP 3 DO
+    str_KeyHandle[4] = KeyHandle.Door_State;  // 2 UP 1 DO
   }
   else if(KeyHandle.Oper_Mode_Dis_State ==1)
   {
@@ -78,7 +78,7 @@ void Uart_Transmit_Hnadle(struct KEYHANDLE KeyHandle)
 
     str_KeyHandle[3] = KeyHandle.Od_State.Fan_State;
 
-    str_KeyHandle[4] = KeyHandle.Od_State.Door_State;  // 2 UP 3 DO  
+    str_KeyHandle[4] = KeyHandle.Od_State.Door_State;  // 2 UP 1 DO  
   
   }
   else if(KeyHandle.Oper_Mode_Dis_State == 2)
@@ -89,7 +89,7 @@ void Uart_Transmit_Hnadle(struct KEYHANDLE KeyHandle)
 
     str_KeyHandle[3] = KeyHandle.Pm_State.Fan_State;
 
-    str_KeyHandle[4] = KeyHandle.Pm_State.Door_State;  // 2 UP 3 DO   
+    str_KeyHandle[4] = KeyHandle.Pm_State.Door_State;  // 2 UP 1 DO   
   }
   str_KeyHandle[5] = 0xff;
   

@@ -269,6 +269,7 @@ struct Od_StatE
   u8 Door_State;
   u8 Fan_State;
   u8 Od_Num;
+  u8 Dis_Door_State;
 };
 struct PM_StatE
 {
@@ -280,12 +281,14 @@ struct PM_StatE
   struct ALLDATE On_alldate;
   struct ALLDATE Off_alldate;
   u8 Pm_Num;
+  u8 Dis_Door_State;
 };
 struct KEYHANDLE{
     u8 Fan_State;
     u8 Led_P1_State;
     u8 Led_P2_State;
     u8 Door_State;
+    u8 Dis_Door_State;
     u8 Fan_Seepd_Max_State;
     u8 HEAP_State;
     u8 HEAP_Dis_State;

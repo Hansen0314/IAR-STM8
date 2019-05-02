@@ -1,4 +1,5 @@
 #include "KeyBorad.h"
+#include "ht1621.h"
 struct KEYHANDLE KeyHandle;
 extern u16 Peripheral_A11_Max;
 extern struct Peripheral peripheral;
@@ -121,16 +122,16 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         {
           if(KeyHandle.Oper_Mode_State == 1)
           {
-          KeyHandle.Pm_State.Led_P1_State ++;
-          if(KeyHandle.Pm_State.Led_P1_State > 1)
-            KeyHandle.Pm_State.Led_P1_State = 0;
+            KeyHandle.Pm_State.Led_P1_State ++;
+            if(KeyHandle.Pm_State.Led_P1_State > 1)
+              KeyHandle.Pm_State.Led_P1_State = 0;
           }
         }
       break;
       case S3_DOWN_VALUE: 
         if(KeyHandle.Oper_Mode_Dis_State == 0)
         {
-          if(KeyHandle.Door_State != 2)
+          if(KeyHandle.Dis_Door_State != 2)
           {
             if(peripheral.Door_Do == 0)
             KeyHandle.Led_P2_State ++;
@@ -142,13 +143,12 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         {
           if(KeyHandle.Oper_Mode_State == 1)
           {
-            
-            if(KeyHandle.Door_State != 2)
+            if(KeyHandle.Od_State.Dis_Door_State != 2)
             {
-              if(peripheral.Door_Do == 0)
-              KeyHandle.Od_State.Led_P2_State ++;
-              if(KeyHandle.Od_State.Led_P2_State > 1)
-                KeyHandle.Od_State.Led_P2_State = 0;
+               // if(peripheral.Door_Do == 0)
+                KeyHandle.Od_State.Led_P2_State ++;
+                if(KeyHandle.Od_State.Led_P2_State > 1)
+                  KeyHandle.Od_State.Led_P2_State = 0;              
             }
           }
         }
@@ -156,9 +156,9 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         {
           if(KeyHandle.Oper_Mode_State == 1)
           {
-            if(KeyHandle.Pm_State.Door_State != 2)
+            if(KeyHandle.Pm_State.Dis_Door_State != 2)
             {
-              if(peripheral.Door_Do == 0)
+              //if(peripheral.Door_Do == 0)
               KeyHandle.Pm_State.Led_P2_State ++;
               if(KeyHandle.Pm_State.Led_P2_State > 1)
                 KeyHandle.Pm_State.Led_P2_State = 0;
@@ -171,11 +171,13 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         {
           if(KeyHandle.Led_P2_State != 1)
           {
-            KeyHandle.Door_State ++;
+            KeyHandle.Dis_Door_State ++;
+            KeyHandle.Door_State = 2;
           }
           Door_Move_time = 0;
-          if(KeyHandle.Door_State > 2)
+          if(KeyHandle.Dis_Door_State > 2)
           {
+            KeyHandle.Dis_Door_State = 1;
             KeyHandle.Door_State = 1;
           }
         }
@@ -185,11 +187,13 @@ void KeyBorad_Hnadle(u8 KeyVaul)
           {
             if(KeyHandle.Od_State.Led_P2_State != 1)
             {
-              KeyHandle.Od_State.Door_State ++;
+              KeyHandle.Od_State.Dis_Door_State++;
+              KeyHandle.Od_State.Door_State = 2;
             }
             Door_Move_time = 0;
-            if(KeyHandle.Od_State.Door_State > 2)
+            if(KeyHandle.Od_State.Dis_Door_State > 2)
             {
+              KeyHandle.Od_State.Dis_Door_State = 1;
               KeyHandle.Od_State.Door_State = 1;
             }
           }
@@ -200,11 +204,13 @@ void KeyBorad_Hnadle(u8 KeyVaul)
           {
             if(KeyHandle.Pm_State.Led_P2_State != 1)
             {
-              KeyHandle.Pm_State.Door_State ++;
+              KeyHandle.Pm_State.Dis_Door_State ++;
+              KeyHandle.Pm_State.Door_State = 2;
             }
             Door_Move_time = 0;
-            if(KeyHandle.Pm_State.Door_State > 2)
+            if(KeyHandle.Pm_State.Dis_Door_State > 2)
             {
+              KeyHandle.Pm_State.Dis_Door_State = 1;
               KeyHandle.Pm_State.Door_State = 1;
             }
           }
@@ -500,6 +506,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         KeyHandle.Fan_Seepd_Max_State = 0;
         KeyHandle.HEAP_State = 0;
         KeyHandle.HEAP_Dis_State = 0;     
+        ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
         KeyHandle.Oper_Mode_State = 1;   
         KeyHandle.Oper_Mode_Dis_State = 1;
         KeyHandle.Pm_State.Pm_Num = 0;
@@ -512,6 +519,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         KeyHandle.HEAP_Dis_State = 0;     
         KeyHandle.Oper_Mode_State = 1;   
         KeyHandle.Oper_Mode_Dis_State = 2;
+        ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
         KeyHandle.Pm_State.Pm_Num = 0;
         KeyHandle.Time_State = 0;
       }
@@ -522,6 +530,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         KeyHandle.HEAP_Dis_State = 0;     
         KeyHandle.Oper_Mode_State = 1;   
         KeyHandle.Oper_Mode_Dis_State = 2;
+        ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
         KeyHandle.Pm_State.Pm_Num = 4;
         KeyHandle.Time_State = 0;
       }      
@@ -532,6 +541,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         KeyHandle.HEAP_Dis_State = 0;     
         KeyHandle.Oper_Mode_State = 1;   
         KeyHandle.Oper_Mode_Dis_State = 2;
+        ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
         KeyHandle.Pm_State.Pm_Num = 5;  
         KeyHandle.Time_State = 0;
       }
@@ -542,6 +552,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         KeyHandle.HEAP_Dis_State = 0;     
         KeyHandle.Oper_Mode_State = 1;   
         KeyHandle.Oper_Mode_Dis_State = 2;
+        ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
         KeyHandle.Pm_State.Pm_Num = 6; 
         KeyHandle.Time_State = 0;
       }      
@@ -552,6 +563,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         KeyHandle.HEAP_Dis_State = 0;     
         KeyHandle.Oper_Mode_State = 1;   
         KeyHandle.Oper_Mode_Dis_State = 2;
+        ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
         KeyHandle.Pm_State.Pm_Num = 7;  
         KeyHandle.Time_State = 0;
       }
@@ -562,6 +574,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         KeyHandle.HEAP_Dis_State = 0;     
         KeyHandle.Oper_Mode_State = 1;   
         KeyHandle.Oper_Mode_Dis_State = 2;
+        ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
         KeyHandle.Pm_State.Pm_Num = 8;   
         KeyHandle.Time_State = 0;
       }
@@ -572,6 +585,7 @@ void KeyBorad_Hnadle(u8 KeyVaul)
         KeyHandle.HEAP_Dis_State = 0;     
         KeyHandle.Oper_Mode_State = 1;   
         KeyHandle.Oper_Mode_Dis_State = 2;
+        ht1621_Char_write1(1,T_Addr[18],T_Mask[18],0,0);
         KeyHandle.Pm_State.Pm_Num = 9;  
         KeyHandle.Time_State = 0;
       }  
@@ -579,7 +593,11 @@ void KeyBorad_Hnadle(u8 KeyVaul)
 //      else if(KeyHandle.Wm_Num == 12)
       break;
       case S8_DOWN_VALUE:  
-        if(KeyHandle.Wm_Num > 8) KeyHandle.Oper_Mode_State = 0;
+        if(KeyHandle.Wm_Num > 8) 
+        {
+          KeyHandle.Oper_Mode_State = 0;
+          Door_Move_time = 0;
+        }
       break;      
       default : 
       break;
