@@ -47,10 +47,17 @@ struct Peripheral Peripheral_Conversion()
 {
 
   peripheral.a11 = (float)Peripheral_Realy.a11/1024*Peripheral_A11_Max;
-  a12 = (float)Peripheral_Realy.a12/1024*5;
-  a12_next = a12*a12;
-  a12_math = 117*a12_next-785*a12+1231;
-  peripheral.a12 = a12_math*10;
+  if(Peripheral_Realy.a12 == 0)
+  peripheral.a12 = 0;
+  else
+  {
+    a12 = (float)Peripheral_Realy.a12/1024*5;
+    a12_next = a12*a12;
+    a12_math = 117*a12_next-785*a12+1231;
+    peripheral.a12 = a12_math*10;
+    if(peripheral.a12 >= 999) peripheral.a12 = 999;
+    if(peripheral.a12 <= 0) peripheral.a12 = 0;
+  }
   peripheral.a13 = (float)Peripheral_Realy.a13/1024*100;//湿度
   peripheral.Door_Do = Peripheral_Realy.Door_Do;
   peripheral.Door_Up = Peripheral_Realy.Door_Up;
@@ -146,6 +153,7 @@ void main()
             KeyHandle_Init.Pm_State.Led_P2_State = 0;
             KeyHandle_Init.Pm_State.Fan_State = 0;
             KeyHandle_Init.Pm_State.Door_State = 3;    
+            KeyHandle_Init.Pm_State.Dis_Door_State = 3;
             Uart_Transmit_Hnadle(KeyHandle_Init);
             TIM1_Cmd(DISABLE);            
             Pm_OnState = 0;
@@ -161,7 +169,9 @@ void main()
                 KeyHandle.Led_P2_State = 0;
                 KeyHandle.Fan_State = 0;
                 KeyHandle.Door_State = 2;
+                KeyHandle.Dis_Door_State = 2;
                 KeyHandle.Oper_Mode_Dis_State = 0;
+                Uart_Transmit_Hnadle(KeyHandle);
                 TIM1_Cmd(ENABLE);
                 break;
               }               

@@ -330,56 +330,56 @@ void set_lcd_off()
 }
 void Peripheral_Rceive_Display(struct Peripheral peripheral,u8 Fan_Seepd_Max_State)
 {
-   if(Fan_Seepd_Max_State == 0)
-   {
-		ht1621_Char_write1(1,Dis_Digitron_Addr[1],Cs1_Dis_Digitron_Num[peripheral.a11/100],1,1);
-		ht1621_Char_write1(1,Dis_Digitron_Addr[2],Cs1_Dis_Digitron_Num[peripheral.a11%100/10],1,1);
-	   	ht1621_Char_write1(1,P_Addr[2],P_Mask[2],1,0);
-		ht1621_Char_write1(1,Dis_Digitron_Addr[3],Cs1_Dis_Digitron_Num[peripheral.a11%10],1,1);
-   }
-   else
-   {
-     if(Dis_Bling)
-     {
-		ht1621_Char_write1(1,Dis_Digitron_Addr[1],Cs1_Dis_Digitron_Num[8],0,1);
-		ht1621_Char_write1(1,Dis_Digitron_Addr[2],Cs1_Dis_Digitron_Num[8],0,1);
-	     	ht1621_Char_write1(1,P_Addr[2],P_Mask[2],0,0);
-		ht1621_Char_write1(1,Dis_Digitron_Addr[3],Cs1_Dis_Digitron_Num[8],0,1); 
-		//Dis_Bling = 0;
-     }
-     else
-     {
-		ht1621_Char_write1(1,Dis_Digitron_Addr[1],Cs1_Dis_Digitron_Num[Peripheral_A11_Max/100],1,1);
-		ht1621_Char_write1(1,Dis_Digitron_Addr[2],Cs1_Dis_Digitron_Num[Peripheral_A11_Max%100/10],1,1);
-	     	ht1621_Char_write1(1,P_Addr[2],P_Mask[2],1,0);
-		ht1621_Char_write1(1,Dis_Digitron_Addr[3],Cs1_Dis_Digitron_Num[Peripheral_A11_Max%10],1,1); 
-     }
-   }
-	ht1621_Char_write1(1,Dis_Digitron_Addr[4],Cs1_Dis_Digitron_Num[peripheral.a12/100],1,1);
-	ht1621_Char_write1(1,Dis_Digitron_Addr[5],Cs1_Dis_Digitron_Num[peripheral.a12%100/10],1,1);
-	ht1621_Char_write1(1,P_Addr[4],P_Mask[4],1,0);
-	ht1621_Char_write1(1,Dis_Digitron_Addr[6],Cs1_Dis_Digitron_Num[peripheral.a12%10],1,1);
-   
-	ht1621_Char_write1(1,Dis_Digitron_Addr[7],Cs1_Dis_Digitron_Num[peripheral.a13/10],1,1);
-	ht1621_Char_write1(1,Dis_Digitron_Addr[8],Cs1_Dis_Digitron_Num[peripheral.a13%10],1,1);
-        
-      
-      if(peripheral.Dp == 1) ht1621_Char_write1(1,T_Addr[14],T_Mask[14],0,0);
-      else if (peripheral.Dp == 0) 
+    if(Fan_Seepd_Max_State == 0)
+    {
+      ht1621_Char_write1(1,Dis_Digitron_Addr[1],Cs1_Dis_Digitron_Num[peripheral.a11/100],1,1);
+      ht1621_Char_write1(1,Dis_Digitron_Addr[2],Cs1_Dis_Digitron_Num[peripheral.a11%100/10],1,1);
+      ht1621_Char_write1(1,P_Addr[2],P_Mask[2],1,0);
+      ht1621_Char_write1(1,Dis_Digitron_Addr[3],Cs1_Dis_Digitron_Num[peripheral.a11%10],1,1);
+    }
+    else
+    {
+      if(Dis_Bling)
       {
-        if(Dis_Dp)
-        ht1621_Char_write1(1,T_Addr[14],T_Mask[14],1,0);  
-        else
-        ht1621_Char_write1(1,T_Addr[14],T_Mask[14],0,0);  
+                ht1621_Char_write1(1,Dis_Digitron_Addr[1],Cs1_Dis_Digitron_Num[8],0,1);
+                ht1621_Char_write1(1,Dis_Digitron_Addr[2],Cs1_Dis_Digitron_Num[8],0,1);
+                ht1621_Char_write1(1,P_Addr[2],P_Mask[2],0,0);
+                ht1621_Char_write1(1,Dis_Digitron_Addr[3],Cs1_Dis_Digitron_Num[8],0,1); 
+                //Dis_Bling = 0;
       }
-      if(peripheral.Fr == 1) ht1621_Char_write1(1,T_Addr[13],T_Mask[13],0,0);
-      else if (peripheral.Fr == 0) 
+      else
       {
-        if(Dis_Fr)
-        ht1621_Char_write1(1,T_Addr[13],T_Mask[13],1,0);  
-        else
-        ht1621_Char_write1(1,T_Addr[13],T_Mask[13],0,0);  
+                ht1621_Char_write1(1,Dis_Digitron_Addr[1],Cs1_Dis_Digitron_Num[Peripheral_A11_Max/100],1,1);
+                ht1621_Char_write1(1,Dis_Digitron_Addr[2],Cs1_Dis_Digitron_Num[Peripheral_A11_Max%100/10],1,1);
+                ht1621_Char_write1(1,P_Addr[2],P_Mask[2],1,0);
+                ht1621_Char_write1(1,Dis_Digitron_Addr[3],Cs1_Dis_Digitron_Num[Peripheral_A11_Max%10],1,1); 
       }
+    }
+    ht1621_Char_write1(1,Dis_Digitron_Addr[4],Cs1_Dis_Digitron_Num[peripheral.a12/100],1,1);
+    ht1621_Char_write1(1,Dis_Digitron_Addr[5],Cs1_Dis_Digitron_Num[peripheral.a12%100/10],1,1);
+    ht1621_Char_write1(1,P_Addr[4],P_Mask[4],1,0);
+    ht1621_Char_write1(1,Dis_Digitron_Addr[6],Cs1_Dis_Digitron_Num[peripheral.a12%10],1,1);
+
+    ht1621_Char_write1(1,Dis_Digitron_Addr[7],Cs1_Dis_Digitron_Num[peripheral.a13/10],1,1);
+    ht1621_Char_write1(1,Dis_Digitron_Addr[8],Cs1_Dis_Digitron_Num[peripheral.a13%10],1,1);
+    
+  
+    if(peripheral.Dp == 1) ht1621_Char_write1(1,T_Addr[14],T_Mask[14],0,0);
+    else if (peripheral.Dp == 0) 
+    {
+      if(Dis_Dp)
+      ht1621_Char_write1(1,T_Addr[14],T_Mask[14],1,0);  
+      else
+      ht1621_Char_write1(1,T_Addr[14],T_Mask[14],0,0);  
+    }
+    if(peripheral.Fr == 1) ht1621_Char_write1(1,T_Addr[13],T_Mask[13],0,0);
+    else if (peripheral.Fr == 0) 
+    {
+      if(Dis_Fr)
+      ht1621_Char_write1(1,T_Addr[13],T_Mask[13],1,0);  
+      else
+      ht1621_Char_write1(1,T_Addr[13],T_Mask[13],0,0);  
+    }
 }
 void Hepa_Set_Display(struct Hepa hepa,struct KEYHANDLE KeyHandle,struct Peripheral peripheral)
 {
@@ -1399,12 +1399,7 @@ void Display_all(struct Peripheral peripheral,struct KEYHANDLE KeyHandle,struct 
           KeyHandle.Od_State.Led_P2_State = 0;
           Uart_Transmit_Hnadle(KeyHandle);
         }
-        if((Hepa.Fan_Seepd > peripheral.a11)||(Hepa.Work_Time < hepa_time)) 
-        {
-          KeyHandle.Od_State.Er = 1;
-          //Uart_Transmit_Hnadle(KeyHandle);
-        }
-        else KeyHandle.Od_State.Er = 0;
+
       }
 
       Fan_Speed_State_Display(KeyHandle.Od_State.Fan_State);
@@ -1423,12 +1418,6 @@ void Display_all(struct Peripheral peripheral,struct KEYHANDLE KeyHandle,struct 
           KeyHandle.Pm_State.Led_P2_State = 0;
           Uart_Transmit_Hnadle(KeyHandle);
         }
-        if((Hepa.Fan_Seepd > peripheral.a11)||(Hepa.Work_Time < hepa_time)) 
-        {
-          KeyHandle.Pm_State.Er = 1;
-         // Uart_Transmit_Hnadle(KeyHandle);
-        }
-        else KeyHandle.Pm_State.Er = 0;
       }    
 
       Fan_Speed_State_Display(KeyHandle.Pm_State.Fan_State);
